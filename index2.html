@@ -1,745 +1,490 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Tempus Omnia Revelat Observatory — Services Catalogue 2026</title>
+    <title>THE TEMPUS OMNIA REVELAT OBSERVATORY — Presentation & Services Catalogue 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#0A0C10',
+                            surface: '#12161F',
+                            card: '#181E2A',
+                            border: '#2A3447',
+                            accent: '#4F46E5',
+                            gold: '#D4AF37',
+                            goldlight: '#F3E5AB',
+                            text: '#E2E8F0',
+                            muted: '#94A3B8'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'Georgia', 'serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #0a0d14;
-            --bg-card: #121824;
-            --bg-card-hover: #182030;
-            --accent-gold: #c9a050;
-            --accent-gold-light: #e5c178;
-            --accent-cyan: #38bdf8;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --border-color: rgba(201, 160, 80, 0.2);
-            --border-subtle: rgba(255, 255, 255, 0.07);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
+            background-color: #0A0C10;
+            color: #E2E8F0;
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
-            line-height: 1.6;
-            padding: 0;
-            margin: 0;
-            overflow-x: hidden;
+        }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Subtle Grid Background Pattern */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
         }
 
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* Header / Banner */
-        header {
-            border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(180deg, rgba(201, 160, 80, 0.08) 0%, rgba(10, 13, 20, 0) 100%);
-            padding: 4rem 0 3rem;
-            text-align: center;
-            position: relative;
-        }
-
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-        }
-
-        .brand-subtitle {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--accent-gold);
-            font-size: 0.85rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.75rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: #ffffff;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .tagline {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .latin-motto {
-            font-style: italic;
-            color: var(--accent-gold-light);
-            font-family: 'Cinzel', serif;
-        }
-
-        /* Hero / About Section */
-        .hero-section {
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2.5rem;
-        }
-
-        @media (max-width: 868px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .hero-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .hero-card.featured {
-            border-color: var(--border-color);
-        }
-
-        .section-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent-gold);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        h2 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: #ffffff;
-            margin-bottom: 1.25rem;
-            letter-spacing: 0.02em;
-        }
-
-        .hero-card p {
-            color: var(--text-secondary);
-            margin-bottom: 1.25rem;
-            font-size: 0.98rem;
-        }
-
-        .bullet-list {
-            list-style: none;
-        }
-
-        .bullet-list li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.6rem;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .bullet-list li::before {
-            content: '◆';
-            position: absolute;
-            left: 0;
-            color: var(--accent-gold);
-            font-size: 0.7rem;
-            top: 0.2rem;
-        }
-
-        /* Flow Diagram */
-        .discipline-flow {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 6px;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .flow-step {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--accent-gold-light);
-            font-weight: 500;
-        }
-
-        .flow-arrow {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        /* Matrix Table */
-        .matrix-section {
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .matrix-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 2rem;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .matrix-table th {
-            background-color: rgba(201, 160, 80, 0.1);
-            color: var(--accent-gold-light);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 1rem 1.25rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .matrix-table td {
-            background-color: var(--bg-card);
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .matrix-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .matrix-table tr:hover td {
-            background-color: var(--bg-card-hover);
-        }
-
-        .level-badge {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--accent-gold);
-            font-weight: 600;
-        }
-
-        .price-badge {
-            font-family: 'JetBrains Mono', monospace;
-            color: #ffffff;
-            font-weight: 600;
-        }
-
-        /* Detailed Services Grid */
-        .services-section {
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 2rem;
-        }
-
-        @media (max-width: 600px) {
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .service-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 2.25rem;
-            transition: border-color 0.3s ease, transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .service-card:hover {
-            border-color: var(--border-color);
-            transform: translateY(-2px);
-        }
-
-        .service-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .service-title-group h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            color: #ffffff;
-        }
-
-        .service-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--accent-gold);
-            letter-spacing: 0.1em;
-            margin-bottom: 0.25rem;
-        }
-
-        .service-price {
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(201, 160, 80, 0.15);
-            color: var(--accent-gold-light);
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-
-        .service-desc {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .details-block {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .details-block-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
-        }
-
-        .timescale-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        /* Bespoke & Process Section */
-        .process-section {
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .pipeline-box {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .pipeline-steps {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .pipeline-step {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-subtle);
-            padding: 0.75rem 1.25rem;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text-primary);
-        }
-
-        /* Footer & Contact */
-        footer {
-            padding: 5rem 0 3rem;
-            text-align: center;
-            background: linear-gradient(0deg, rgba(201, 160, 80, 0.05) 0%, rgba(10, 13, 20, 0) 100%);
-        }
-
-        .contact-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            max-width: 700px;
-            margin: 0 auto 3rem;
-        }
-
-        .contact-email {
-            display: inline-block;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.2rem;
-            color: var(--accent-gold-light);
-            text-decoration: none;
-            margin-top: 1.5rem;
-            padding: 0.75rem 1.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: rgba(201, 160, 80, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .contact-email:hover {
-            background: rgba(201, 160, 80, 0.2);
-            color: #ffffff;
-            border-color: var(--accent-gold);
-        }
-
-        .footer-tagline {
-            font-family: 'Cinzel', serif;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            letter-spacing: 0.1em;
-            margin-top: 2rem;
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
         }
     </style>
 </head>
-<body>
+<body class="bg-brand-bg text-brand-text antialiased selection:bg-brand-gold selection:text-brand-bg min-h-screen flex flex-col justify-between bg-grid-pattern">
 
-    <!-- Header / Title -->
-    <header>
-        <div class="container">
-            <div class="brand-subtitle">Presentation & Services Catalogue 2026</div>
-            <h1>The Tempus Omnia Revelat Observatory</h1>
-            <p class="tagline">Navigating the AI Frontier Through Structured Perspective • <span class="latin-motto">Tempus Omnia Revelat — Time reveals</span></p>
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-brand-bg/90 backdrop-blur-md border-b border-brand-border/60">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full border border-brand-gold/60 flex items-center justify-center bg-brand-surface shadow-inner">
+                    <span class="font-cinzel font-bold text-brand-gold text-lg">T</span>
+                </div>
+                <div>
+                    <span class="font-cinzel font-bold text-sm tracking-widest block text-slate-100">TEMPUS OMNIA REVELAT</span>
+                    <span class="text-xs font-mono text-brand-muted tracking-wider uppercase">Observatory • 2026</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center space-x-8 text-xs font-mono tracking-widest text-brand-muted uppercase">
+                <a href="#about" class="hover:text-brand-gold transition-colors">About</a>
+                <a href="#discipline" class="hover:text-brand-gold transition-colors">Discipline</a>
+                <a href="#matrix" class="hover:text-brand-gold transition-colors">Services Matrix</a>
+                <a href="#details" class="hover:text-brand-gold transition-colors">Core Services</a>
+                <a href="#process" class="hover:text-brand-gold transition-colors">Process</a>
+            </nav>
+            <div>
+                <a href="#contact" class="inline-flex items-center justify-center px-4 py-2 border border-brand-gold/50 text-xs font-mono tracking-wider text-brand-gold hover:bg-brand-gold hover:text-brand-bg transition-all duration-200 uppercase rounded-sm">
+                    Inquire
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- Hero / About Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="grid-2">
-                <div class="hero-card featured">
-                    <span class="section-label">01 // Architecture</span>
-                    <h2>About The Observatory</h2>
-                    <p>The Tempus Omnia Revelat Observatory investigates emerging technological and societal change through structured observation, research, synthesis, and comparative perspective. Artificial intelligence is reshaping how people work, how organisations operate, and how decisions are made.</p>
-                    <p>Progress demands more than speed — it requires disciplined observation, historical context, research, and multiple perspectives.</p>
-                    <ul class="bullet-list">
-                        <li>What is changing & why it matters</li>
-                        <li>What may be affected & what assumptions are emerging</li>
-                        <li>What can be learned from previous transitions</li>
-                        <li>How to respond responsibly</li>
-                    </ul>
-                </div>
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
 
-                <div class="hero-card">
-                    <span class="section-label">02 // Methodology & Role</span>
-                    <h2>Our Discipline & Role</h2>
-                    
-                    <div class="discipline-flow">
-                        <span class="flow-step">Observe</span>
-                        <span class="flow-arrow">→</span>
-                        <span class="flow-step">Contextualise</span>
-                        <span class="flow-arrow">→</span>
-                        <span class="flow-step">Compare</span>
-                        <span class="flow-arrow">→</span>
-                        <span class="flow-step">Question</span>
-                        <span class="flow-arrow">→</span>
-                        <span class="flow-step">Discern</span>
-                        <span class="flow-arrow">→</span>
-                        <span class="flow-step">Act</span>
+        <!-- Hero / Document Title Header -->
+        <section class="border-b border-brand-border pb-16 pt-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-gold/30 bg-brand-surface text-brand-gold text-xs font-mono mb-4">
+                        <span class="w-2 h-2 rounded-full bg-brand-gold animate-pulse"></span>
+                        Official Catalogue 2026
                     </div>
-
-                    <p><em>"How do we remain capable of understanding what AI is changing while we are participating in the change itself?"</em></p>
-                    
-                    <ul class="bullet-list" style="margin-top: 1rem;">
-                        <li><strong>Not a prediction service</strong> or implementation consultancy</li>
-                        <li><strong>Purely structured perspective</strong> applied to questions that matter</li>
-                        <li>We help examine evidence, clarify context, and test assumptions</li>
-                        <li>Final decisions always remain with leadership</li>
-                    </ul>
+                    <h1 class="font-cinzel text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                        THE TEMPUS OMNIA REVELAT <br class="hidden sm:inline"/>OBSERVATORY
+                    </h1>
+                </div>
+                <div class="text-left md:text-right font-mono text-xs text-brand-muted space-y-1">
+                    <p class="text-brand-gold">PRESENTATION & SERVICES CATALOGUE</p>
+                    <p>DOC REF: TOR-CAT-2026-V1</p>
+                    <p>PAGE 1–4 CONSOLIDATED</p>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Engagement Matrix -->
-    <section class="matrix-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label">Engagement Overview</span>
-                <h2>Core Engagement Matrix</h2>
-                <p style="color: var(--text-secondary);">Four primary modes of engagement depending on where you are in your decision-making process.</p>
+            <div class="p-6 rounded-lg bg-brand-surface border border-brand-border/80 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 rounded-full blur-2xl pointer-events-none"></div>
+                <p class="font-cinzel text-lg sm:text-xl text-brand-goldlight tracking-wide italic mb-2">
+                    "Navigating the AI Frontier Through Structured Perspective"
+                </p>
+                <p class="font-mono text-xs text-brand-muted uppercase tracking-widest">
+                    Tempus Omnia Revelat — Time reveals.
+                </p>
             </div>
+        </section>
 
-            <table class="matrix-table">
-                <thead>
-                    <tr>
-                        <th>Level</th>
-                        <th>Engagement Mode</th>
-                        <th>Core Purpose</th>
-                        <th>Starting Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="level-badge">01 — EXPLORE</td>
-                        <td><strong>Research Brief</strong></td>
-                        <td>Investigate a defined question or shift</td>
-                        <td class="price-badge">From £750</td>
-                    </tr>
-                    <tr>
-                        <td class="level-badge">02 — UNDERSTAND</td>
-                        <td><strong>AI Transition Assessment</strong></td>
-                        <td>Examine what transition means for your organisation</td>
-                        <td class="price-badge">From £2,500</td>
-                    </tr>
-                    <tr>
-                        <td class="level-badge">03 — DECIDE</td>
-                        <td><strong>Strategic Perspective & Advisory</strong></td>
-                        <td>Structured perspective around consequential decisions</td>
-                        <td class="price-badge">From £5,000</td>
-                    </tr>
-                    <tr>
-                        <td class="level-badge">04 — ENGAGE</td>
-                        <td><strong>Workshops & Executive Sessions</strong></td>
-                        <td>Bring structured perspective directly into the room</td>
-                        <td class="price-badge">From £1,500</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- Detailed Services -->
-    <section class="services-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label">Detailed Framework</span>
-                <h2>Core Services Detailed</h2>
-            </div>
-
-            <div class="services-grid">
-                <!-- Service 1 -->
-                <div class="service-card">
-                    <div>
-                        <div class="service-card-header">
-                            <div class="service-title-group">
-                                <div class="service-num">LEVEL 01 // EXPLORE</div>
-                                <h3>Research Brief</h3>
-                            </div>
-                            <span class="service-price">From £750</span>
+        <!-- About & Core Role Section -->
+        <section id="about" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div class="lg:col-span-7 space-y-6">
+                <div class="flex items-center gap-3">
+                    <span class="font-mono text-xs text-brand-gold">01 // CONTEXT</span>
+                    <h2 class="font-cinzel text-2xl font-bold text-white tracking-wide">About The Observatory</h2>
+                </div>
+                <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+                    The Tempus Omnia Revelat Observatory investigates emerging technological and societal change through structured observation, research, synthesis, and comparative perspective. Artificial intelligence is reshaping how people work, how organisations operate, and how decisions are made.
+                </p>
+                <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+                    Progress demands more than speed — it requires disciplined observation, historical context, research, and multiple perspectives.
+                </p>
+                
+                <div class="pt-4 border-t border-brand-border/50">
+                    <h3 class="text-xs font-mono uppercase text-brand-gold tracking-wider mb-4">We help organisations understand:</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                        <div class="p-3 bg-brand-surface border border-brand-border/60 rounded flex items-center gap-2">
+                            <span class="text-brand-gold">➔</span> What is changing
                         </div>
-                        <p class="service-desc">A focused, independent investigation into a clearly defined question concerning AI, emerging technology, organisational change, or wider technological and societal transition. Provides structured perspective before a client decides what to do.</p>
+                        <div class="p-3 bg-brand-surface border border-brand-border/60 rounded flex items-center gap-2">
+                            <span class="text-brand-gold">➔</span> Why it matters
+                        </div>
+                        <div class="p-3 bg-brand-surface border border-brand-border/60 rounded flex items-center gap-2">
+                            <span class="text-brand-gold">➔</span> What may be affected
+                        </div>
+                        <div class="p-3 bg-brand-surface border border-brand-border/60 rounded flex items-center gap-2">
+                            <span class="text-brand-gold">➔</span> Emerging assumptions & dependencies
+                        </div>
+                        <div class="p-3 bg-brand-surface border border-brand-border/60 rounded flex items-center gap-2">
+                            <span class="text-brand-gold">➔</span> Lessons from previous transitions
+                        </div>
+                        <div class="p-3 bg-brand-surface border border-brand-border/60 rounded flex items-center gap-2">
+                            <span class="text-brand-gold">➔</span> How to respond responsibly
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Highlight Box -->
+            <div class="lg:col-span-5 bg-brand-card p-6 sm:p-8 rounded-xl border border-brand-gold/30 gold-border-glow relative">
+                <div class="text-xs font-mono text-brand-gold uppercase tracking-widest mb-3">// OUR CORE QUESTION</div>
+                <blockquote class="font-cinzel text-lg text-white mb-6 leading-snug">
+                    "How do we remain capable of understanding what AI is changing while we are participating in the change itself?"
+                </blockquote>
+                <div class="pt-6 border-t border-brand-border space-y-3">
+                    <div class="text-xs font-mono text-brand-gold uppercase tracking-widest">// OUR ROLE</div>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        We help clients examine evidence, clarify context, challenge assumptions, identify uncertainty, and weigh implications. <strong class="text-white">The final decisions always remain yours.</strong>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Discipline Section -->
+        <section id="discipline" class="space-y-8 bg-brand-surface p-8 rounded-xl border border-brand-border">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-6">
+                <div>
+                    <span class="font-mono text-xs text-brand-gold">02 // METHODOLOGY</span>
+                    <h2 class="font-cinzel text-2xl font-bold text-white tracking-wide">Our Discipline</h2>
+                </div>
+                <!-- Cycle Badge -->
+                <div class="font-mono text-xs bg-brand-bg px-4 py-2 rounded-full border border-brand-border text-brand-gold">
+                    Observe → Contextualise → Compare → Question → Discern → Act
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-5 bg-brand-bg border border-brand-border rounded-lg space-y-2">
+                    <div class="text-red-400 font-mono text-xl">✕</div>
+                    <h3 class="font-cinzel font-bold text-slate-200">Not Prediction</h3>
+                    <p class="text-xs text-brand-muted leading-relaxed">Not a prediction service. We analyse observable patterns and systemic implications rather than forecasting speculative futures.</p>
+                </div>
+                <div class="p-5 bg-brand-bg border border-brand-border rounded-lg space-y-2">
+                    <div class="text-red-400 font-mono text-xl">✕</div>
+                    <h3 class="font-cinzel font-bold text-slate-200">Not Implementation</h3>
+                    <p class="text-xs text-brand-muted leading-relaxed">Not an implementation consultancy. We maintain strict independence by remaining detached from vendor execution.</p>
+                </div>
+                <div class="p-5 bg-brand-bg border border-brand-border rounded-lg space-y-2">
+                    <div class="text-red-400 font-mono text-xl">✕</div>
+                    <h3 class="font-cinzel font-bold text-slate-200">Not Advocacy</h3>
+                    <p class="text-xs text-brand-muted leading-relaxed">Not advocacy for a predetermined outcome. We hold no inherent agenda for or against specific technical paths.</p>
+                </div>
+                <div class="p-5 bg-brand-card border border-brand-gold/40 rounded-lg space-y-2">
+                    <div class="text-brand-gold font-mono text-xl">✓</div>
+                    <h3 class="font-cinzel font-bold text-brand-goldlight">Pure Perspective</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">Purely structured perspective applied strictly to questions that matter to your organisation's long-term capability.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Engagement Matrix (Table) -->
+        <section id="matrix" class="space-y-8">
+            <div>
+                <span class="font-mono text-xs text-brand-gold">03 // FRAMEWORK</span>
+                <h2 class="font-cinzel text-2xl font-bold text-white tracking-wide">Engagement Matrix</h2>
+                <p class="text-xs font-mono text-brand-muted mt-1">Four primary modes of engagement depending on where you are in your decision-making process.</p>
+            </div>
+
+            <div class="overflow-x-auto border border-brand-border rounded-xl bg-brand-surface">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-brand-border bg-brand-card font-mono text-xs text-brand-gold tracking-wider uppercase">
+                            <th class="p-4 sm:p-5">Level</th>
+                            <th class="p-4 sm:p-5">Engagement</th>
+                            <th class="p-4 sm:p-5">Core Purpose</th>
+                            <th class="p-4 sm:p-5 text-right">Starting Price</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-brand-border/60 text-sm font-sans">
+                        <tr class="hover:bg-brand-card/50 transition-colors">
+                            <td class="p-4 sm:p-5 font-mono text-brand-gold text-xs font-bold">01 — EXPLORE</td>
+                            <td class="p-4 sm:p-5 font-cinzel font-semibold text-white">Research Brief</td>
+                            <td class="p-4 sm:p-5 text-slate-300 text-xs sm:text-sm">Investigate a defined question or shift</td>
+                            <td class="p-4 sm:p-5 text-right font-mono text-brand-goldlight font-semibold">From £750</td>
+                        </tr>
+                        <tr class="hover:bg-brand-card/50 transition-colors">
+                            <td class="p-4 sm:p-5 font-mono text-brand-gold text-xs font-bold">02 — UNDERSTAND</td>
+                            <td class="p-4 sm:p-5 font-cinzel font-semibold text-white">AI Transition Assessment</td>
+                            <td class="p-4 sm:p-5 text-slate-300 text-xs sm:text-sm">Examine what transition means for your organization</td>
+                            <td class="p-4 sm:p-5 text-right font-mono text-brand-goldlight font-semibold">From £2,500</td>
+                        </tr>
+                        <tr class="hover:bg-brand-card/50 transition-colors">
+                            <td class="p-4 sm:p-5 font-mono text-brand-gold text-xs font-bold">03 — DECIDE</td>
+                            <td class="p-4 sm:p-5 font-cinzel font-semibold text-white">Strategic Perspective & Advisory</td>
+                            <td class="p-4 sm:p-5 text-slate-300 text-xs sm:text-sm">Structured perspective around consequential decisions</td>
+                            <td class="p-4 sm:p-5 text-right font-mono text-brand-goldlight font-semibold">From £5,000</td>
+                        </tr>
+                        <tr class="hover:bg-brand-card/50 transition-colors">
+                            <td class="p-4 sm:p-5 font-mono text-brand-gold text-xs font-bold">04 — ENGAGE</td>
+                            <td class="p-4 sm:p-5 font-cinzel font-semibold text-white">Workshops & Executive Sessions</td>
+                            <td class="p-4 sm:p-5 text-slate-300 text-xs sm:text-sm">Bring structured perspective directly into the room</td>
+                            <td class="p-4 sm:p-5 text-right font-mono text-brand-goldlight font-semibold">From £1,500</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Core Services Detailed -->
+        <section id="details" class="space-y-12">
+            <div>
+                <span class="font-mono text-xs text-brand-gold">04 // SPECIFICATIONS</span>
+                <h2 class="font-cinzel text-2xl font-bold text-white tracking-wide">Core Services Detailed</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Service 01 -->
+                <div class="bg-brand-surface border border-brand-border p-6 sm:p-8 rounded-xl flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-brand-border/60 pb-4">
+                            <span class="font-mono text-xs text-brand-gold">LEVEL 01 — EXPLORE</span>
+                            <span class="font-mono text-sm font-semibold text-brand-goldlight">From £750</span>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white">Research Brief</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            A focused, independent investigation into a clearly defined question concerning AI, emerging technology, organisational change, or wider technological and societal transition. Provides structured perspective before a client decides what to do.
+                        </p>
                         
-                        <div class="details-block">
-                            <div class="details-block-title">Typical Questions</div>
-                            <ul class="bullet-list">
+                        <div class="space-y-3 pt-2">
+                            <h4 class="text-xs font-mono text-brand-gold uppercase tracking-wider">Typical Questions:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
                                 <li>What is happening & what do we actually know?</li>
                                 <li>What evidence exists and what has changed?</li>
                                 <li>What competing interpretations exist?</li>
                                 <li>Why might this matter & what should we investigate?</li>
                             </ul>
                         </div>
-
-                        <div class="details-block">
-                            <div class="details-block-title">Output & Delivery</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Concise Research Brief (5–15 pages) including executive summary, evidence, comparative perspective, findings, and questions for further consideration.</p>
-                        </div>
                     </div>
-                    <div class="timescale-tag">⚡ Timescale: 7–10 working days</div>
+
+                    <div class="pt-4 border-t border-brand-border/60 bg-brand-bg/50 p-4 rounded text-xs font-mono space-y-1">
+                        <p class="text-brand-gold font-semibold">OUTPUT & DELIVERY:</p>
+                        <p class="text-slate-300">• Concise Research Brief (5–15 pages)</p>
+                        <p class="text-slate-300">• Executive summary, evidence, comparative perspective, findings, and questions for further consideration</p>
+                        <p class="text-slate-400 font-semibold pt-1">Timescale: 7–10 working days</p>
+                    </div>
                 </div>
 
-                <!-- Service 2 -->
-                <div class="service-card">
-                    <div>
-                        <div class="service-card-header">
-                            <div class="service-title-group">
-                                <div class="service-num">LEVEL 02 // UNDERSTAND</div>
-                                <h3>AI Transition Assessment</h3>
-                            </div>
-                            <span class="service-price">From £2,500</span>
+                <!-- Service 02 -->
+                <div class="bg-brand-surface border border-brand-border p-6 sm:p-8 rounded-xl flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-brand-border/60 pb-4">
+                            <span class="font-mono text-xs text-brand-gold">LEVEL 02 — UNDERSTAND</span>
+                            <span class="font-mono text-sm font-semibold text-brand-goldlight">From £2,500</span>
                         </div>
-                        <p class="service-desc">Examines how the introduction, expansion, or increasing dependency upon AI affects an organisation, function, process, or operating environment. Shifts focus from <em>"Can AI perform this task?"</em> to <em>"What happens when the organisation relies upon AI performing this task?"</em></p>
+                        <h3 class="font-cinzel text-xl font-bold text-white">AI Transition Assessment</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Examines how the introduction, expansion, or increasing dependency upon AI affects an organisation, function, process, or operating environment. Shifts focus from "Can AI perform this task?" to "What happens when the organisation begins to rely upon AI performing this task?"
+                        </p>
                         
-                        <div class="details-block">
-                            <div class="details-block-title">Areas Examined</div>
-                            <ul class="bullet-list">
+                        <div class="space-y-3 pt-2">
+                            <h4 class="text-xs font-mono text-brand-gold uppercase tracking-wider">Areas Examined:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
                                 <li>Capability & Organisational Readiness</li>
                                 <li>Emerging Dependency & Operational Exposure</li>
                                 <li>Human & Organisational Impact</li>
                                 <li>Governance & Accountability Considerations</li>
                             </ul>
                         </div>
-
-                        <div class="details-block">
-                            <div class="details-block-title">Output & Delivery</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Comprehensive Assessment Report (15–30 pages) providing a structured picture of current situation, emerging transitions, findings, and key attention areas.</p>
-                        </div>
                     </div>
-                    <div class="timescale-tag">⚡ Timescale: 2–4 weeks</div>
+
+                    <div class="pt-4 border-t border-brand-border/60 bg-brand-bg/50 p-4 rounded text-xs font-mono space-y-1">
+                        <p class="text-brand-gold font-semibold">OUTPUT & DELIVERY:</p>
+                        <p class="text-slate-300">• Comprehensive Assessment Report (15–30 pages)</p>
+                        <p class="text-slate-300">• Structured picture of current situation, emerging transitions, findings, and key attention areas</p>
+                        <p class="text-slate-400 font-semibold pt-1">Timescale: 2–4 weeks</p>
+                    </div>
                 </div>
 
-                <!-- Service 3 -->
-                <div class="service-card">
-                    <div>
-                        <div class="service-card-header">
-                            <div class="service-title-group">
-                                <div class="service-num">LEVEL 03 // DECIDE</div>
-                                <h3>Strategic Perspective & Advisory</h3>
-                            </div>
-                            <span class="service-price">From £5,000</span>
+                <!-- Service 03 -->
+                <div class="bg-brand-surface border border-brand-border p-6 sm:p-8 rounded-xl flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-brand-border/60 pb-4">
+                            <span class="font-mono text-xs text-brand-gold">LEVEL 03 — DECIDE</span>
+                            <span class="font-mono text-sm font-semibold text-brand-goldlight">From £5,000</span>
                         </div>
-                        <p class="service-desc">Provides independent, structured perspective to leadership facing significant technological, strategic, or organizational decisions. Helps decision-makers examine what they know, what they don't know, assumptions, alternatives, and long-term consequences.</p>
+                        <h3 class="font-cinzel text-xl font-bold text-white">Strategic Perspective & Advisory</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Provides independent, structured perspective to leadership facing significant technological, strategic, or organizational decisions. Helps decision-makers examine what they know, what they don't know, assumptions, alternatives, and long-term consequences.
+                        </p>
                         
-                        <div class="details-block">
-                            <div class="details-block-title">Typical Questions & Focus</div>
-                            <ul class="bullet-list">
+                        <div class="space-y-3 pt-2">
+                            <h4 class="text-xs font-mono text-brand-gold uppercase tracking-wider">Typical Questions & Focus:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
                                 <li>Should we adopt this technology now, later, or not at all?</li>
                                 <li>What are we potentially committing ourselves to?</li>
                                 <li>What would be difficult or impossible to reverse?</li>
                                 <li>What assumptions must be true?</li>
                             </ul>
                         </div>
-
-                        <div class="details-block">
-                            <div class="details-block-title">Work Delivered</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Decision definition, evidence review, assumption testing, alternative comparison, dependency/irreversibility analysis, strategic advisory sessions & consequence analysis.</p>
-                        </div>
                     </div>
-                    <div class="timescale-tag">⚡ Timescale: Tailored engagement</div>
+
+                    <div class="pt-4 border-t border-brand-border/60 bg-brand-bg/50 p-4 rounded text-xs font-mono space-y-1">
+                        <p class="text-brand-gold font-semibold">WORK DELIVERED:</p>
+                        <p class="text-slate-300">• Decision definition & Evidence review</p>
+                        <p class="text-slate-300">• Assumption testing & Alternative comparison</p>
+                        <p class="text-slate-300">• Dependency & Irreversibility analysis</p>
+                        <p class="text-slate-300">• Strategic advisory sessions & Consequence analysis</p>
+                    </div>
                 </div>
 
-                <!-- Service 4 -->
-                <div class="service-card">
-                    <div>
-                        <div class="service-card-header">
-                            <div class="service-title-group">
-                                <div class="service-num">LEVEL 04 // ENGAGE</div>
-                                <h3>Workshops & Executive Sessions</h3>
-                            </div>
-                            <span class="service-price">From £1,500</span>
+                <!-- Service 04 -->
+                <div class="bg-brand-surface border border-brand-border p-6 sm:p-8 rounded-xl flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-brand-border/60 pb-4">
+                            <span class="font-mono text-xs text-brand-gold">LEVEL 04 — ENGAGE</span>
+                            <span class="font-mono text-sm font-semibold text-brand-goldlight">From £1,500</span>
                         </div>
-                        <p class="service-desc">Brings the Observatory's structured perspective directly into your organisation for situations where leadership needs to examine difficult questions, challenge assumptions, and think together.</p>
+                        <h3 class="font-cinzel text-xl font-bold text-white">Workshops & Executive Sessions</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Brings the Observatory's structured perspective directly into your organisation for situations where leadership needs to examine difficult questions, challenge assumptions, and think together.
+                        </p>
                         
-                        <div class="details-block">
-                            <div class="details-block-title">Workshop Themes</div>
-                            <ul class="bullet-list">
+                        <div class="space-y-3 pt-2">
+                            <h4 class="text-xs font-mono text-brand-gold uppercase tracking-wider">Workshop Themes:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
                                 <li>Understanding the AI transition</li>
                                 <li>AI capability vs organisational readiness</li>
                                 <li>AI dependency & Responsible adoption</li>
                                 <li>Decision-making under technological uncertainty</li>
                             </ul>
                         </div>
-
-                        <div class="details-block">
-                            <div class="details-block-title">Executive Session Model</div>
-                            <p style="color: var(--text-secondary); font-size: 0.9rem;"><strong>Input → Research → Structured Perspective → Discussion → Action</strong><br>Prior research conducted beforehand to ensure high-value facilitation.</p>
-                        </div>
                     </div>
-                    <div class="timescale-tag">⚡ Timescale: Half-day to multi-session</div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Bespoke & Engagement Process -->
-    <section class="process-section">
-        <div class="container">
-            <div class="grid-2">
-                <div class="hero-card">
-                    <span class="section-label">Custom Scope</span>
-                    <h2>Bespoke Commissions</h2>
-                    <p>Not every important question fits into a predefined category. We accept bespoke commissions tailored to specific analytical requirements:</p>
-                    <ul class="bullet-list">
-                        <li><strong>Commissioned Research:</strong> Targeted research into specific technologies, markets, or societal developments.</li>
-                        <li><strong>Public Observatory Reports:</strong> Research contributing to the wider industry discourse.</li>
-                        <li><strong>Technical / Strategic Investigations:</strong> Linking technical capability with governance & operational strategy.</li>
-                    </ul>
+                    <div class="pt-4 border-t border-brand-border/60 bg-brand-bg/50 p-4 rounded text-xs font-mono space-y-1">
+                        <p class="text-brand-gold font-semibold">EXECUTIVE SESSION MODEL:</p>
+                        <p class="text-slate-300 font-mono text-[11px] my-1">Input → Research → Structured Perspective → Discussion → Action</p>
+                        <p class="text-slate-400">Prior research conducted beforehand to ensure high-value facilitation.</p>
+                    </div>
                 </div>
 
-                <div class="hero-card">
-                    <span class="section-label">Pricing Architecture</span>
-                    <h2>Pricing Principles</h2>
-                    <p>Published prices are starting points, not fixed ceilings or rigid packages. Final pricing reflects research depth, analytical complexity, stakeholder involvement, and reporting synthesis required.</p>
-                    <p style="margin-top: 1rem; border-left: 2px solid var(--accent-gold); padding-left: 1rem; color: var(--accent-gold-light); font-family: 'Cinzel', serif;">
-                        "The catalogue defines capability; the pre-scan defines the engagement; the work determines the depth."
-                    </p>
-                </div>
             </div>
+        </section>
 
-            <div class="pipeline-box">
-                <span class="section-label">Engagement Pipeline</span>
-                <h3 style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: #fff; margin-top: 0.5rem;">How an Engagement Begins</h3>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 600px; margin: 0.5rem auto 0;">Every commission begins with a simple conversation. We run an initial pre-scan using our internal RD-0 framework to gauge structural complexity.</p>
-                
-                <div class="pipeline-steps">
-                    <div class="pipeline-step">1. Brief</div>
-                    <span style="color: var(--accent-gold);">→</span>
-                    <div class="pipeline-step">2. Pre-scan</div>
-                    <span style="color: var(--accent-gold);">→</span>
-                    <div class="pipeline-step">3. Rapid Diagnostic</div>
-                    <span style="color: var(--accent-gold);">→</span>
-                    <div class="pipeline-step">4. Scope & Proposal</div>
-                    <span style="color: var(--accent-gold);">→</span>
-                    <div class="pipeline-step">5. Delivery</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer & Contact -->
-    <footer>
-        <div class="container">
-            <div class="contact-box">
-                <span class="section-label">Get In Touch</span>
-                <h2>Initiate a Commission or Inquiry</h2>
-                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">
-                    Reach out to schedule an initial discussion or submit a preliminary research brief.
-                </p>
-                <a href="mailto:enquiries@tempusomniarevelat.org" class="contact-email">enquiries@tempusomniarevelat.org</a>
-            </div>
+        <!-- Bespoke Commissions & Process Section -->
+        <section id="process" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <p class="footer-tagline">The Tempus Omnia Revelat Observatory © 2026 — All Rights Reserved</p>
+            <!-- Bespoke Commissions -->
+            <div class="bg-brand-surface border border-brand-border p-6 sm:p-8 rounded-xl space-y-6">
+                <div>
+                    <span class="font-mono text-xs text-brand-gold">05 // CUSTOM WORK</span>
+                    <h2 class="font-cinzel text-xl font-bold text-white tracking-wide mt-1">Beyond Core Services</h2>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Not every important question fits into a predefined category. We accept bespoke commissions including:
+                </p>
+                <div class="space-y-4 text-xs sm:text-sm">
+                    <div class="p-3 bg-brand-bg rounded border border-brand-border/80">
+                        <strong class="text-white block font-cinzel mb-1">Commissioned Research</strong>
+                        <span class="text-slate-400">Targeted research into specific technologies, markets, or societal developments.</span>
+                    </div>
+                    <div class="p-3 bg-brand-bg rounded border border-brand-border/80">
+                        <strong class="text-white block font-cinzel mb-1">Public Observatory Reports</strong>
+                        <span class="text-slate-400">Research contributing to the wider industry discourse.</span>
+                    </div>
+                    <div class="p-3 bg-brand-bg rounded border border-brand-border/80">
+                        <strong class="text-white block font-cinzel mb-1">Technical / Strategic Investigations</strong>
+                        <span class="text-slate-400">Linking technical capability with governance & operational strategy.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How an Engagement Begins & Pricing Principles -->
+            <div class="bg-brand-surface border border-brand-border p-6 sm:p-8 rounded-xl flex flex-col justify-between space-y-6">
+                <div class="space-y-6">
+                    <div>
+                        <span class="font-mono text-xs text-brand-gold">06 // WORKFLOW</span>
+                        <h2 class="font-cinzel text-xl font-bold text-white tracking-wide mt-1">How an Engagement Begins</h2>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        Every commission begins with a simple conversation. We run an initial pre-scan using our internal <strong class="text-brand-gold">RD-0 framework</strong> to gauge structural complexity.
+                    </p>
+                    
+                    <div class="p-4 bg-brand-bg rounded-lg border border-brand-border font-mono text-xs text-center text-brand-goldlight space-y-2">
+                        <div class="text-[10px] text-brand-muted uppercase tracking-widest mb-1">Engagement Pipeline</div>
+                        <p class="leading-relaxed">
+                            Brief → Pre-scan → Rapid Diagnostic → Scope → Proposal → Commission → Production → Delivery
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <h3 class="font-mono text-xs text-brand-gold uppercase tracking-wider">Pricing Principles</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Published prices are starting points, not fixed ceilings or rigid packages. Final pricing reflects research depth, analytical complexity, stakeholder involvement, and reporting synthesis required.
+                        </p>
+                        <p class="text-xs text-brand-muted italic">
+                            The catalogue defines capability; the pre-scan defines the engagement; the work determines the depth.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- CTA / Footer Contact Card -->
+        <section id="contact" class="bg-brand-card border border-brand-gold/40 p-8 sm:p-12 rounded-2xl text-center space-y-6 gold-border-glow relative overflow-hidden">
+            <div class="max-w-2xl mx-auto space-y-4">
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-extrabold text-white">Have a Question? Let's Investigate.</h2>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Tell us what you are trying to understand. We will examine the brief, conduct an initial pre-scan, and determine what the question requires.
+                </p>
+                <div class="pt-4">
+                    <a href="mailto:contact@tempusobservatory.org" class="inline-flex items-center gap-3 px-6 py-3 bg-brand-gold text-brand-bg font-mono font-bold text-xs uppercase tracking-widest rounded hover:bg-brand-goldlight transition-colors shadow-lg">
+                        <span>✉ contact@tempusobservatory.org</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Page Footer -->
+    <footer class="border-t border-brand-border/80 bg-brand-bg py-8 mt-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-xs text-brand-muted">
+            <div class="flex items-center space-x-2">
+                <span class="font-cinzel font-bold text-brand-gold">THE TEMPUS OMNIA REVELAT OBSERVATORY</span>
+            </div>
+            <p class="text-center italic">Respect the past. Explore the future. Understand through multiple perspectives.</p>
+            <p>© 2026 Tempus Observatory. All rights reserved.</p>
         </div>
     </footer>
 
