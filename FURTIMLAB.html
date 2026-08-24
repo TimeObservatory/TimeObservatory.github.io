@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FURTIM LAB — Node Station & Home Laboratory</title>
+    <style>
+        :root {
+            --bg-color: #08090b;
+            --panel-bg: #0e1117;
+            --panel-border: #1f242d;
+            --text-main: #f0f3f6;
+            --text-muted: #8b949e;
+            --accent-green: #00ff66;
+            --accent-amber: #ffb703;
+            --accent-blue: #00b4d8;
+            --accent-red: #ff4d4d;
+            --font-mono: 'Courier New', Courier, monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Scanline Overlay Effect */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 2px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .badge-specified { background: rgba(0, 180, 216, 0.15); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+        .badge-included { background: rgba(0, 255, 102, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .badge-pending { background: rgba(255, 183, 3, 0.15); color: var(--accent-amber); border: 1px solid var(--accent-amber); }
+        .badge-future { background: rgba(139, 148, 158, 0.15); color: var(--text-muted); border: 1px solid var(--panel-border); }
+        .badge-locked { background: rgba(255, 73, 73, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            color: var(--accent-green);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .hero-mantra {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+        }
+
+        .hero-mantra div {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 12px 16px;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .terminal-box {
+            background: #000;
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 25px;
+            margin-top: 40px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .terminal-svg {
+            width: 100%;
+            height: auto;
+            max-height: 220px;
+            margin: 20px 0;
+        }
+
+        /* PROGRESSION FLOW */
+        .flow-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .flow-step {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 20px;
+            font-family: var(--font-mono);
+            position: relative;
+        }
+
+        .flow-step-number {
+            color: var(--accent-green);
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .flow-step-title {
+            font-weight: bold;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        /* TABLE STYLING */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        th {
+            background-color: var(--panel-bg);
+            color: var(--text-muted);
+            font-weight: normal;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        /* MEASUREMENT CHAIN */
+        .chain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .chain-node {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 20px 15px;
+            border-top: 3px solid var(--accent-blue);
+        }
+
+        .chain-node h4 {
+            font-family: var(--font-mono);
+            color: var(--accent-blue);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .chain-node p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        /* LIST PANELS */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 30px;
+        }
+
+        .panel h3 {
+            font-family: var(--font-mono);
+            color: var(--text-main);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 10px;
+        }
+
+        ul.tech-list {
+            list-style: none;
+        }
+
+        ul.tech-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        ul.tech-list li::before {
+            content: ">";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-family: var(--font-mono);
+        }
+
+        /* CRYPTO / FUEL SECTION */
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .crypto-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .crypto-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-family: var(--font-mono);
+        }
+
+        .crypto-symbol {
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .crypto-address {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: #000;
+            padding: 10px;
+            border: 1px solid var(--panel-border);
+            word-break: break-all;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .crypto-address:hover {
+            border-color: var(--accent-green);
+        }
+
+        /* FOOTER & BUTTONS */
+        .btn {
+            display: inline-block;
+            background: var(--text-main);
+            color: var(--bg-color);
+            font-family: var(--font-mono);
+            font-weight: bold;
+            padding: 12px 24px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            padding: 60px 0;
+            background: #000;
+            border-top: 1px solid var(--panel-border);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            .chain-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanline"></div>
+
+    <div class="container">
+        
+        <!-- 1. HERO -->
+        <section class="hero">
+            <div style="width: 100%;">
+                <div class="section-tag">// SYSTEM INITIALIZED</div>
+                <h1 class="hero-title">FURTIM LAB</h1>
+                <div class="hero-subtitle">LOCAL NODE STATION & HOME LABORATORY</div>
+                <p style="max-width: 700px;">Developing high-performance blockchain infrastructure in stealth mode.</p>
+                
+                <div class="hero-mantra">
+                    <div>Compute locally.</div>
+                    <div>Store locally.</div>
+                    <div>Verify independently.</div>
+                    <div>Connect selectively.</div>
+                </div>
+
+                <div class="terminal-box">
+                    <div class="terminal-header">
+                        <span>TERMINAL STATION — NODE-001</span>
+                        <span class="badge badge-pending">STATUS: HARDWARE PENDING</span>
+                    </div>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">A local-first computational-economic laboratory for cryptography, decentralized-network infrastructure, measurement and verification.</p>
+                    
+                    <!-- SVG Visualizing Physical Node -> Network Boundary -->
+                    <svg class="terminal-svg" viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="20" width="240" height="160" rx="4" fill="#0e1117" stroke="#1f242d" stroke-width="2"/>
+                        <text x="30" y="50" fill="#00ff66" font-family="monospace" font-size="12">PHYSICAL MACHINE</text>
+                        <text x="30" y="80" fill="#f0f3f6" font-family="monospace" font-size="14" font-weight="bold">Raspberry Pi 5</text>
+                        <text x="30" y="100" fill="#8b949e" font-family="monospace" font-size="11">16GB RAM / Active Cooling</text>
+                        <rect x="30" y="120" width="200" height="40" rx="2" fill="#000" stroke="#1f242d"/>
+                        <text x="40" y="145" fill="#00b4d8" font-family="monospace" font-size="11">KingSpec 1TB NVMe (Hat+)</text>
+                        
+                        <path d="M 250 100 L 350 100" stroke="#00ff66" stroke-width="2" stroke-dasharray="4 4"/>
+                        
+                        <rect x="350" y="50" width="180" height="100" rx="4" fill="#0e1117" stroke="#00ff66" stroke-width="2"/>
+                        <text x="370" y="85" fill="#00ff66" font-family="monospace" font-size="12">LOCAL BOUNDARY</text>
+                        <text x="370" y="115" fill="#f0f3f6" font-family="monospace" font-size="14" font-weight="bold">NODE-001</text>
+                        <text x="370" y="135" fill="#8b949e" font-family="monospace" font-size="10">Sovereign Verification</text>
+                        
+                        <path d="M 530 100 L 630 100" stroke="#1f242d" stroke-width="2"/>
+                        
+                        <rect x="630" y="20" width="160" height="160" rx="4" fill="#0e1117" stroke="#1f242d" stroke-width="2"/>
+                        <text x="645" y="50" fill="#ffb703" font-family="monospace" font-size="12">EXTERNAL</text>
+                        <text x="645" y="80" fill="#8b949e" font-family="monospace" font-size="11">Decentralized Nets</text>
+                        <text x="645" y="100" fill="#8b949e" font-family="monospace" font-size="11">Optional Cloud</text>
+                        <text x="645" y="120" fill="#8b949e" font-family="monospace" font-size="11">Peer RPCs</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. THE PROPOSITION -->
+        <section>
+            <div class="section-tag">// 01. ARCHITECTURE</div>
+            <h2>THE PROPOSITION</h2>
+            <p>Terminal Station is a local-first computational-economic laboratory: a sovereign node in which computation, storage, memory and verification remain under local control, while cloud resources are treated as optional external capabilities.</p>
+            <p>The laboratory investigates how computational capacity can participate in networks and how energy, time, computation and infrastructure can become measurable economic resources.</p>
+            
+            <div class="flow-container">
+                <div class="flow-step">
+                    <div class="flow-step-number">PHASE 01</div>
+                    <div class="flow-step-title">MACHINE</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">PHASE 02</div>
+                    <div class="flow-step-title">NODE</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">PHASE 03</div>
+                    <div class="flow-step-title">INFRASTRUCTURE</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">PHASE 04</div>
+                    <div class="flow-step-title">SERVICE</div>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.85rem; font-family: var(--font-mono); color: var(--text-muted); text-align: center;">This is the developmental trajectory of FURTIM LAB, not a claim of completion.</p>
+        </section>
+
+        <!-- 3. NODE-001 HARDWARE -->
+        <section>
+            <div class="section-tag">// 02. HARDWARE</div>
+            <h2>NODE-001 — THE PHYSICAL INSTRUMENT</h2>
+            <p>The first physical implementation of the FURTIM local-first computational architecture. Deliberately lean. No NAS. No dedicated GPU. No unnecessary network infrastructure. No second node. No mandatory cloud dependency.</p>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>System</th>
+                            <th>Specification</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Compute</td>
+                            <td>Raspberry Pi 5 — 16 GB RAM</td>
+                            <td><span class="badge badge-specified">SPECIFIED</span></td>
+                        </tr>
+                        <tr>
+                            <td>Primary Storage</td>
+                            <td>KingSpec 1 TB M.2 2242 NVMe</td>
+                            <td><span class="badge badge-specified">SPECIFIED</span></td>
+                        </tr>
+                        <tr>
+                            <td>NVMe Interface</td>
+                            <td>Raspberry Pi M.2 HAT+</td>
+                            <td><span class="badge badge-specified">SPECIFIED</span></td>
+                        </tr>
+                        <tr>
+                            <td>Recovery Storage</td>
+                            <td>128 GB microSD</td>
+                            <td><span class="badge badge-included">INCLUDED</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cooling</td>
+                            <td>Aluminium case + active cooling</td>
+                            <td><span class="badge badge-specified">SPECIFIED / KIT</span></td>
+                        </tr>
+                        <tr>
+                            <td>Network</td>
+                            <td>Gigabit Ethernet + Wi-Fi</td>
+                            <td><span class="badge badge-included">BUILT-IN</span></td>
+                        </tr>
+                        <tr>
+                            <td>Power</td>
+                            <td>Raspberry Pi 5-rated USB-C supply</td>
+                            <td><span class="badge badge-specified">SPECIFIED</span></td>
+                        </tr>
+                        <tr>
+                            <td>Operating System</td>
+                            <td>Raspberry Pi OS — Bookworm</td>
+                            <td><span class="badge badge-specified">TARGET</span></td>
+                        </tr>
+                        <tr>
+                            <td>Crypto Stack</td>
+                            <td>Progressive installation</td>
+                            <td><span class="badge badge-future">FUTURE</span></td>
+                        </tr>
+                        <tr>
+                            <td>Blockchain</td>
+                            <td>Ethereum candidate</td>
+                            <td><span class="badge badge-locked">NOT LOCKED</span></td>
+                        </tr>
+                        <tr>
+                            <td>Monitoring</td>
+                            <td>CPU / RAM / temp / storage / network / energy</td>
+                            <td><span class="badge badge-future">FUTURE</span></td>
+                        </tr>
+                        <tr>
+                            <td>Measurement Schema</td>
+                            <td>FME-001</td>
+                            <td><span class="badge badge-included">DRAFT COMPLETE</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. PHYSICAL -> DIGITAL -> ECONOMIC -->
+        <section>
+            <div class="section-tag">// 03. LOGIC</div>
+            <h2>PHYSICAL → DIGITAL → ECONOMIC</h2>
+            <p>NODE-001 is not simply a Raspberry Pi running blockchain software. It is intended to become a measurable physical computational instrument.</p>
+            
+            <div class="chain-grid">
+                <div class="chain-node">
+                    <h4>01. PHYSICAL</h4>
+                    <p>Pi 5 + NVMe + Ethernet</p>
+                </div>
+                <div class="chain-node">
+                    <h4>02. COMPUTATIONAL</h4>
+                    <p>CPU / RAM / Storage / Network</p>
+                </div>
+                <div class="chain-node">
+                    <h4>03. FUNCTIONAL</h4>
+                    <p>Crypto / Node / Network Services</p>
+                </div>
+                <div class="chain-node">
+                    <h4>04. MEASURED</h4>
+                    <p>Time / Energy / Throughput / Output</p>
+                </div>
+                <div class="chain-node">
+                    <h4>05. VERIFIED</h4>
+                    <p>Reproducible Evidence</p>
+                </div>
+                <div class="chain-node">
+                    <h4>06. ECONOMIC</h4>
+                    <p>Cost / Value / Revenue / Net</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. SOFTWARE PRINCIPLE -->
+        <section>
+            <div class="section-tag">// 04. SOFTWARE ARCHITECTURE</div>
+            <h2>BUILD PROGRESSIVELY</h2>
+            <p>The software environment is established from a clean operating-system baseline. Nothing is installed simply because it can be installed.</p>
+            
+            <div class="grid-2">
+                <div class="panel">
+                    <h3>01. FOUNDATION & ADMIN</h3>
+                    <ul class="tech-list">
+                        <li>Raspberry Pi OS (Linux kernel)</li>
+                        <li>System services, networking & storage security</li>
+                        <li>SSH, Git, Python, build tools</li>
+                        <li>System & network diagnostic monitoring</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>02. DEV & CRYPTOGRAPHY</h3>
+                    <ul class="tech-list">
+                        <li>Python, C / C++, Rust environments</li>
+                        <li>OpenSSL & libsodium</li>
+                        <li>Language-specific cryptographic libraries</li>
+                        <li>Experimental native implementations</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>03. SERVICES</h3>
+                    <ul class="tech-list">
+                        <li>Containers where explicitly justified</li>
+                        <li>Local metrics databases</li>
+                        <li>Node services & RPC endpoints</li>
+                        <li>Targeted local telemetry</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>04. NETWORK</h3>
+                    <ul class="tech-list">
+                        <li>Blockchain infrastructure components</li>
+                        <li>Decentralized-network services</li>
+                        <li>Experimental state protocols</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6 & 7. VERIFICATION & ECONOMIC EXPERIMENT -->
+        <section>
+            <div class="grid-2">
+                <div>
+                    <div class="section-tag">// 05. PRINCIPLE</div>
+                    <h2>INDEPENDENT VERIFICATION</h2>
+                    <p>FURTIM's local-first principle is about retaining the ability to observe, measure and verify what the system is doing.</p>
+                    <ul class="tech-list">
+                        <li>Computation remains local</li>
+                        <li>Primary data remains local</li>
+                        <li>Measurements remain locally recorded</li>
+                        <li>External services treated as dependencies</li>
+                        <li>Results must be reproducible</li>
+                        <li>Assumptions remain fully visible</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="section-tag">// 06. EXPERIMENT</div>
+                    <h2>FROM COMPUTATION TO VALUE</h2>
+                    <p>Can computational capacity become a measurable economic resource?</p>
+                    <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+                        <p><strong style="color:var(--text-main)">TIME:</strong> Operational runtime metrics</p>
+                        <p><strong style="color:var(--text-main)">ENERGY:</strong> Measured power consumption</p>
+                        <p><strong style="color:var(--text-main)">COMPUTATION:</strong> Work units performed</p>
+                        <p><strong style="color:var(--text-main)">THROUGHPUT:</strong> Useful verified output</p>
+                        <p><strong style="color:var(--text-main)">NET:</strong> Economic value minus operational cost</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. TERMINAL STATION WORKFLOW -->
+        <section>
+            <div class="section-tag">// 07. METHODOLOGY</div>
+            <h2>A MACHINE BECOMES A NODE</h2>
+            <p>The purpose is not to imitate a data centre, but to establish a controlled experimental baseline. Additional infrastructure is justified purely by evidence.</p>
+            <div style="font-family: var(--font-mono); background: var(--panel-bg); padding: 25px; border: 1px solid var(--panel-border); text-align: center; font-size: 1.1rem; color: var(--accent-green);">
+                NODE-001 &nbsp;&rarr;&nbsp; MEASURE &nbsp;&rarr;&nbsp; VERIFY &nbsp;&rarr;&nbsp; UNDERSTAND &nbsp;&rarr;&nbsp; EXPAND
+            </div>
+        </section>
+
+        <!-- 9. FUEL THE NODE -->
+        <section>
+            <div class="section-tag">// 08. CAPITAL ALLOCATION</div>
+            <h2>FUEL THE NODE</h2>
+            <p>To support local computational power, memory overhead, and independent verification bandwidth, network capital can be streamed or deposited directly to these sovereign addresses. Click address to copy.</p>
+
+            <div class="crypto-grid">
+                <div class="crypto-card">
+                    <div class="crypto-meta"><span class="crypto-symbol">BTC</span><span>Bitcoin</span></div>
+                    <div class="crypto-address" onclick="copyText(this)">36GxRmfhLtpk6eR41gc7WT779LAaRgfQrk</div>
+                </div>
+                <div class="crypto-card">
+                    <div class="crypto-meta"><span class="crypto-symbol">ETH</span><span>Ethereum</span></div>
+                    <div class="crypto-address" onclick="copyText(this)">0x434e5856De714D14ACd9E67C7A3946c5c5Ffda41</div>
+                </div>
+                <div class="crypto-card">
+                    <div class="crypto-meta"><span class="crypto-symbol">USDT</span><span>Tether</span></div>
+                    <div class="crypto-address" onclick="copyText(this)">0x434e5856De714D14ACd9E67C7A3946c5c5Ffda41</div>
+                </div>
+                <div class="crypto-card">
+                    <div class="crypto-meta"><span class="crypto-symbol">XRP</span><span>Ripple</span></div>
+                    <div class="crypto-address" onclick="copyText(this)">rLHzPsX6oXkzU2qL12kHCH8G8cnZv1rBJh</div>
+                </div>
+                <div class="crypto-card">
+                    <div class="crypto-meta"><span class="crypto-symbol">TRX</span><span>Tron</span></div>
+                    <div class="crypto-address" onclick="copyText(this)">TYof1mky9u9MwZjXdDEciop12RaTHc19bh</div>
+                </div>
+                <div class="crypto-card">
+                    <div class="crypto-meta"><span class="crypto-symbol">SOL</span><span>Solana</span></div>
+                    <div class="crypto-address" onclick="copyText(this)">3NB6JVgg2AdZgRnNF8rMrQpadtXu4x2LG9Ms8ts3NA1T</div>
+                </div>
+                <div class="crypto-card">
+                    <div class="crypto-meta"><span class="crypto-symbol">TON</span><span>Toncoin</span></div>
+                    <div class="crypto-address" onclick="copyText(this)">UQDUZZfo4VlHL33-9BuZE6h3W7I_bKku52p79QAVsWSvkljJ</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px; padding: 15px; border-left: 2px solid var(--accent-amber); background: rgba(255, 183, 3, 0.05); font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+                <strong style="color: var(--accent-amber);">NETWORK VERIFICATION WARNING:</strong> Always verify the asset and network before sending. FURTIM LAB does not assume that an address is valid for every network simply because the address format appears compatible.
+            </div>
+        </section>
+
+        <!-- 10. COFFEE & 11. CONTACT -->
+        <section>
+            <div class="grid-2">
+                <div>
+                    <div class="section-tag">// 09. DIRECT SUPPORT</div>
+                    <h2>COFFEE / SMALL SUPPORT</h2>
+                    <p>For those who simply want to contribute to the laboratory using fiat channels:</p>
+                    <a href="https://buymeacoffee.com/furtim" target="_blank" rel="noopener" class="btn">☕ BUY FURTIM LAB A COFFEE</a>
+                    <p style="font-size: 0.85rem; margin-top: 15px;">Small contributions help support physical operation and hardware iteration.</p>
+                </div>
+                <div>
+                    <div class="section-tag">// 10. COMMUNICATIONS</div>
+                    <h2>CONTACT</h2>
+                    <p>Technical development, experimental infrastructure, research, and node development collaboration.</p>
+                    <p class="mono" style="color: var(--accent-green); font-size: 1.1rem; font-weight: bold;">FURTIMLABS@OUTLOOK.COM</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 12. FOOTER -->
+    <footer>
+        <div class="container footer-grid">
+            <div>
+                <strong style="color: var(--text-main);">FURTIM LAB</strong><br>
+                LOCAL-FIRST COMPUTATIONAL ECONOMICS
+            </div>
+            <div>
+                TERMINAL STATION — NODE-001<br>
+                <span style="color: var(--accent-amber);">SPECIFIED / HARDWARE PENDING</span>
+            </div>
+            <div>
+                Compute locally. Store locally.<br>
+                Verify independently. Connect selectively.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyText(element) {
+            const text = element.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = element.innerText;
+                element.innerText = "COPIED TO CLIPBOARD";
+                element.style.borderColor = "#00ff66";
+                element.style.color = "#00ff66";
+                setTimeout(() => {
+                    element.innerText = originalText;
+                    element.style.borderColor = "";
+                    element.style.color = "";
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
