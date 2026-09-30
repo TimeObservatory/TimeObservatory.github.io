@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifestation Triad Audio Driver</title>
+    <style>
+        :root {
+            --bg-color: #0a0c10;
+            --panel-bg: #12161e;
+            --border-color: #2a3242;
+            --gold: #d4af37;
+            --green: #22c55e;
+            --orange: #f97316;
+            --red: #ef4444;
+            --text: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+
+        .channel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .channel {
+            background: rgba(255,255,255,0.03);
+            border-left: 4px solid #fff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .channel.d6 { border-color: var(--green); }
+        .channel.d10 { border-color: var(--orange); }
+        .channel.d12 { border-color: var(--red); }
+
+        .channel-title {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .channel-desc {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            background: #1c2230;
+            color: var(--gold);
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.active {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .status {
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Aether Pump Transducer</h1>
+    <div class="subtitle">Manifestation Triad Polyphonic Driver</div>
+
+    <div class="channel-list">
+        <div class="channel d6">
+            <div class="channel-title">
+                <span style="color: var(--green);">GREEN d6 (Cube)</span>
+                <span>100% Gain</span>
+            </div>
+            <div class="channel-desc">Carrier: 528 Hz | Pulse: 16.2 Hz (Sawtooth)</div>
+        </div>
+
+        <div class="channel d10">
+            <div class="channel-title">
+                <span style="color: var(--orange);">ORANGE d10 (Trapezohedron)</span>
+                <span>75% Gain</span>
+            </div>
+            <div class="channel-desc">Carrier: 741 Hz | Pulse: 18.6 Hz (Sawtooth)</div>
+        </div>
+
+        <div class="channel d12">
+            <div class="channel-title">
+                <span style="color: var(--red);">RED d12 (Dodecahedron)</span>
+                <span>60% Gain</span>
+            </div>
+            <div class="channel-desc">Carrier: 417 Hz | Pulse: 19.8 Hz (Sawtooth)</div>
+        </div>
+    </div>
+
+    <button id="audioBtn" onclick="toggleAudio()">ENGAGE TRIAD AUDIO</button>
+    <div class="status" id="statusText">STATUS: READY // CONNECT AUDIO CABLE</div>
+</div>
+
+<script>
+    let audioCtx = null;
+    let isPlaying = false;
+    let activeNodes = [];
+
+    const triadConfig = [
+        { name: "d6", carrier: 528, pulse: 16.2, gain: 1.00 },
+        { name: "d10", carrier: 741, pulse: 18.6, gain: 0.75 },
+        { name: "d12", carrier: 417, pulse: 19.8, gain: 0.60 }
+    ];
+
+    function toggleAudio() {
+        if (!isPlaying) {
+            startTriad();
+        } else {
+            stopTriad();
+        }
+    }
+
+    function startTriad() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        const masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(0.2, audioCtx.currentTime); // Master headroom safety
+        masterGain.connect(audioCtx.destination);
+
+        triadConfig.forEach(cfg => {
+            // Carrier Oscillator (Sine Wave)
+            const carrierOsc = audioCtx.createOscillator();
+            carrierOsc.type = 'sine';
+            carrierOsc.frequency.setValueAtTime(cfg.carrier, audioCtx.currentTime);
+
+            // Pulse Oscillator (Sawtooth Modulation)
+            const pulseOsc = audioCtx.createOscillator();
+            pulseOsc.type = 'sawtooth';
+            pulseOsc.frequency.setValueAtTime(cfg.pulse, audioCtx.currentTime);
+
+            // Node Gain (Channel Weighting)
+            const nodeGain = audioCtx.createGain();
+            nodeGain.gain.setValueAtTime(cfg.gain, audioCtx.currentTime);
+
+            // Modulation Gain Stage
+            const modGain = audioCtx.createGain();
+
+            // Connections
+            carrierOsc.connect(modGain);
+            pulseOsc.connect(modGain.gain);
+            modGain.connect(nodeGain);
+            nodeGain.connect(masterGain);
+
+            carrierOsc.start();
+            pulseOsc.start();
+
+            activeNodes.push(carrierOsc, pulseOsc);
+        });
+
+        isPlaying = true;
+        document.getElementById("audioBtn").classList.add("active");
+        document.getElementById("audioBtn").innerText = "HALT TRIAD AUDIO";
+        document.getElementById("statusText").innerText = "STATUS: SIGNAL TRANSMITTING TO AETHER PUMP";
+    }
+
+    function stopTriad() {
+        activeNodes.forEach(node => node.stop());
+        activeNodes = [];
+        isPlaying = false;
+        document.getElementById("audioBtn").classList.remove("active");
+        document.getElementById("audioBtn").innerText = "ENGAGE TRIAD AUDIO";
+        document.getElementById("statusText").innerText = "STATUS: STANDBY // SIGNAL PAUSED";
+    }
+</script>
+</body>
+</html>
