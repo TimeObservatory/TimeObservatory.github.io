@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QBS-01 // Quadratic Brain Synchronization Engine</title>
+    <style>
+        :root {
+            --bg-color: #0a0c10;
+            --panel-bg: rgba(18, 22, 30, 0.75);
+            --border-color: #2a3242;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --gold-accent: #d4af37;
+            --rf-red: #ef4444;
+            --rp-blue: #3b82f6;
+            --lf-green: #22c55e;
+            --lp-yellow: #eab308;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+        }
+
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 680px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: radial-gradient(circle at center, #111520 0%, #06070a 100%);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 1px var(--border-color);
+        }
+
+        .overlay-readout {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 12, 16, 0.85);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--gold-accent);
+            text-align: center;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            width: 85%;
+        }
+
+        .control-panel {
+            width: 100%;
+            max-width: 680px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: #141822;
+            color: var(--text-main);
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            border-color: var(--gold-accent);
+            background: #1c2230;
+        }
+
+        #masterBtn.active {
+            background: #1e293b;
+            border-color: var(--gold-accent);
+            color: var(--gold-accent);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .slider-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .slider-group label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: #2a3242;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold-accent);
+            cursor: pointer;
+        }
+
+        .quadrant-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .rf { background: var(--rf-red); box-shadow: 0 0 6px var(--rf-red); }
+        .rp { background: var(--rp-blue); box-shadow: 0 0 6px var(--rp-blue); }
+        .lf { background: var(--lf-green); box-shadow: 0 0 6px var(--lf-green); }
+        .lp { background: var(--lp-yellow); box-shadow: 0 0 6px var(--lp-yellow); }
+    </style>
+</head>
+<body>
+
+    <!-- Transparent Brain Asset Reference -->
+    <img id="brainImg" src="brain.png" style="display: none;" alt="Centered Brain Matrix">
+
+    <header>
+        <h1>QBS-01 // BRAIN SYNCHRONIZATION</h1>
+        <div class="subtitle">NEURO-COGNITIVE BASELINE CALIBRATION ENGINE</div>
+    </header>
+
+    <div id="canvas-container">
+        <canvas id="qbsCanvas" width="600" height="600"></canvas>
+        <div class="overlay-readout" id="readout">PHASE: STANDBY // ENGAGE ENGINE TO INITIALIZE LEMNISCATE</div>
+    </div>
+
+    <div class="control-panel">
+        <div class="btn-row">
+            <button id="masterBtn" onclick="toggleEngine()">ENGAGE QBS ENGINE</button>
+            <button onclick="resetEngine()">RESET BASELINE</button>
+        </div>
+
+        <div class="slider-grid">
+            <div class="slider-group">
+                <label>CYCLE SPEED (0.05 - 0.20 Hz) <span id="speedVal">0.10 Hz</span></label>
+                <input type="range" id="speedSlider" min="0.05" max="0.20" step="0.01" value="0.10" oninput="updateSpeed(this.value)">
+            </div>
+            <div class="slider-group">
+                <label>AUDIO GAIN <span id="volVal">30%</span></label>
+                <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.30" oninput="updateVolume(this.value)">
+            </div>
+        </div>
+
+        <div class="quadrant-legend">
+            <div class="legend-item"><div class="dot rf"></div> Q1: Right Frontal (Red | Warm)</div>
+            <div class="legend-item"><div class="dot lf"></div> Q3: Left Frontal (Green | Cool)</div>
+            <div class="legend-item"><div class="dot rp"></div> Q2: Right Posterior (Blue | Cool)</div>
+            <div class="legend-item"><div class="dot lp"></div> Q4: Left Posterior (Yellow | Warm)</div>
+        </div>
+    </div>
+
+    <script>
+        // QBS-01 Quadrant Coordinates & Specifications
+        const quadrants = [
+            { id: 1, name: "Right Frontal", color: "#ef4444", rgb: [239, 68, 68], thermal: "Warm", x: 420, y: 180, carrier: 210, pulse: 10.0 },
+            { id: 4, name: "Left Posterior", color: "#eab308", rgb: [234, 179, 8], thermal: "Warm", x: 180, y: 420, carrier: 190, pulse: 7.83 },
+            { id: 3, name: "Left Frontal", color: "#22c55e", rgb: [34, 197, 94], thermal: "Cool", x: 180, y: 180, carrier: 200, pulse: 12.0 },
+            { id: 2, name: "Right Posterior", color: "#3b82f6", rgb: [59, 130, 246], thermal: "Cool", x: 420, y: 420, carrier: 180, pulse: 8.5 }
+        ];
+
+        let canvas, ctx;
+        let isActive = false;
+        let t = 0; // Animation time vector
+        let cycleHz = 0.10; // Default 10s period
+        let audioCtx = null;
+        let masterGain = null;
+        let panner = null;
+        let carrierOsc = null;
+        let pulseOsc = null;
+        let pulseGain = null;
+
+        window.onload = () => {
+            canvas = document.getElementById("qbsCanvas");
+            ctx = canvas.getContext("2d");
+            requestAnimationFrame(render);
+        };
+
+        function toggleEngine() {
+            if (!isActive) {
+                startEngine();
+            } else {
+                stopEngine();
+            }
+        }
+
+        function startEngine() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Web Audio Nodes
+            masterGain = audioCtx.createGain();
+            const vol = parseFloat(document.getElementById("volSlider").value);
+            masterGain.gain.setValueAtTime(vol * 0.25, audioCtx.currentTime);
+
+            panner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+            carrierOsc = audioCtx.createOscillator();
+            carrierOsc.type = 'sine';
+
+            pulseOsc = audioCtx.createOscillator();
+            pulseOsc.type = 'sawtooth';
+
+            pulseGain = audioCtx.createGain();
+
+            // Connections
+            carrierOsc.connect(pulseGain);
+            pulseOsc.connect(pulseGain.gain);
+
+            if (panner) {
+                pulseGain.connect(panner);
+                panner.connect(masterGain);
+            } else {
+                pulseGain.connect(masterGain);
+            }
+            masterGain.connect(audioCtx.destination);
+
+            carrierOsc.start();
+            pulseOsc.start();
+
+            isActive = true;
+            document.getElementById("masterBtn").classList.add("active");
+            document.getElementById("masterBtn").innerText = "HALT CALIBRATION ENGINE";
+        }
+
+        function stopEngine() {
+            if (carrierOsc) {
+                carrierOsc.stop();
+                pulseOsc.stop();
+            }
+            isActive = false;
+            document.getElementById("masterBtn").classList.remove("active");
+            document.getElementById("masterBtn").innerText = "ENGAGE QBS ENGINE";
+            document.getElementById("readout").innerHTML = "PHASE: STANDBY // CALIBRATION PAUSED";
+        }
+
+        function resetEngine() {
+            stopEngine();
+            t = 0;
+            document.getElementById("speedSlider").value = 0.10;
+            updateSpeed(0.10);
+            document.getElementById("volSlider").value = 0.30;
+            updateVolume(0.30);
+        }
+
+        function updateSpeed(val) {
+            cycleHz = parseFloat(val);
+            document.getElementById("speedVal").innerText = cycleHz.toFixed(2) + " Hz";
+        }
+
+        function updateVolume(val) {
+            document.getElementById("volVal").innerText = Math.round(val * 100) + "%";
+            if (masterGain && audioCtx) {
+                masterGain.gain.setValueAtTime(parseFloat(val) * 0.25, audioCtx.currentTime);
+            }
+        }
+
+        // Mathematical Lemniscate Path Mapping
+        function getLemniscatePos(progress) {
+            const angle = progress * Math.PI * 2;
+            const scale = 180;
+            const x = 300 + (scale * Math.cos(angle)) / (1 + Math.sin(angle) * Math.sin(angle));
+            const y = 300 + (scale * Math.sin(angle) * Math.cos(angle)) / (1 + Math.sin(angle) * Math.sin(angle));
+            return { x, y };
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Layer 1 (Bottom): Draw Centered Brain Image Background
+            drawCenteredBrain();
+
+            // Layer 2: Draw Quadrant Radial Glows & Grid Crosshairs
+            drawQuadrants();
+
+            // Layer 3: Draw Lemniscate Figure-8 Trajectory
+            drawLemniscatePath();
+
+            // Layer 4 (Top): Animate the Active Tracer Particle & Thermal Field
+            if (isActive) {
+                t += 0.016 * cycleHz;
+                if (t > 1) t -= 1;
+
+                const pos = getLemniscatePos(t);
+                const activeQuad = getActiveQuadrant(pos);
+
+                updateAudioParameters(activeQuad, pos);
+                drawTracer(pos, activeQuad);
+
+                document.getElementById("readout").innerHTML = `
+                    QUADRANT: <span style="color:${activeQuad.color}">${activeQuad.name.toUpperCase()}</span> | 
+                    THERMAL: <strong>${activeQuad.thermal.toUpperCase()}</strong> | 
+                    CARRIER: ${activeQuad.carrier}Hz / ${activeQuad.pulse}Hz
+                `;
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        function drawCenteredBrain() {
+            const brainImg = document.getElementById("brainImg");
+            if (brainImg && brainImg.complete && brainImg.naturalWidth !== 0) {
+                const imgSize = 320; // Expanded to cover full quadrant area
+                ctx.save();
+                ctx.globalAlpha = 0.45; // Soft opacity so tracer stands out brightly
+                ctx.drawImage(
+                    brainImg,
+                    300 - (imgSize / 2),
+                    300 - (imgSize / 2),
+                    imgSize,
+                    imgSize
+                );
+                ctx.restore();
+            }
+        }
+
+        function drawQuadrants() {
+            ctx.strokeStyle = "rgba(42, 50, 66, 0.6)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(300, 50); ctx.lineTo(300, 550);
+            ctx.moveTo(50, 300); ctx.lineTo(550, 300);
+            ctx.stroke();
+
+            quadrants.forEach(q => {
+                const grad = ctx.createRadialGradient(q.x, q.y, 10, q.x, q.y, 110);
+                grad.addColorStop(0, `rgba(${q.rgb.join(',')}, 0.25)`);
+                grad.addColorStop(1, "rgba(10, 12, 16, 0)");
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(q.x, q.y, 110, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = q.color;
+                ctx.beginPath();
+                ctx.arc(q.x, q.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawLemniscatePath() {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(212, 175, 55, 0.35)";
+            ctx.lineWidth = 2;
+            for (let i = 0; i <= 1; i += 0.01) {
+                const pt = getLemniscatePos(i);
+                if (i === 0) ctx.moveTo(pt.x, pt.y);
+                else ctx.lineTo(pt.x, pt.y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        function getActiveQuadrant(pos) {
+            let minDist = Infinity;
+            let closest = quadrants[0];
+            quadrants.forEach(q => {
+                const d = Math.hypot(q.x - pos.x, q.y - pos.y);
+                if (d < minDist) {
+                    minDist = d;
+                    closest = q;
+                }
+            });
+            return closest;
+        }
+
+        function updateAudioParameters(quad, pos) {
+            if (!audioCtx || !carrierOsc) return;
+
+            carrierOsc.frequency.setTargetAtTime(quad.carrier, audioCtx.currentTime, 0.1);
+            pulseOsc.frequency.setTargetAtTime(quad.pulse, audioCtx.currentTime, 0.1);
+
+            if (panner) {
+                const panVal = (pos.x - 300) / 200;
+                panner.pan.setTargetAtTime(Math.max(-1, Math.min(1, panVal)), audioCtx.currentTime, 0.1);
+            }
+        }
+
+        function drawTracer(pos, quad) {
+            // Glow aura overlaying the brain image
+            const auraGrad = ctx.createRadialGradient(pos.x, pos.y, 5, pos.x, pos.y, 45);
+            auraGrad.addColorStop(0, `rgba(${quad.rgb.join(',')}, 0.9)`);
+            auraGrad.addColorStop(1, `rgba(${quad.rgb.join(',')}, 0)`);
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 45, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Core bright tracer node
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowColor = quad.color;
+            ctx.shadowBlur = 16;
+        }
+    </script>
+</body>
+</html>
