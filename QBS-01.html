@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<!-- saved from url=(0211)file:///C:/Users/Steph/AppData/Local/Microsoft/Olk/Attachments/ooa-6a6f8176-7954-4ab8-ac0f-ab688bea23e2/c9f1805117362a535649aaea3b84195c7d29c84103752456825f713e20dbe5c9/QBS-01_Quadrant_Frequency_Controls_v21.htm -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QBS-01 // Quadratic Brain Synchronization Engine</title>
+    <style>
+        :root {
+            --bg-color: #0a0c10;
+            --panel-bg: rgba(18, 22, 30, 0.75);
+            --border-color: #2a3242;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --gold-accent: #d4af37;
+            --rf-red: #ef4444;
+            --rp-blue: #3b82f6;
+            --lf-green: #22c55e;
+            --lp-yellow: #eab308;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+        }
+
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 680px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: radial-gradient(circle at center, #111520 0%, #06070a 100%);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 1px var(--border-color);
+        }
+
+        .overlay-readout {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 12, 16, 0.85);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--gold-accent);
+            text-align: center;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            width: 85%;
+        }
+
+        .control-panel {
+            width: 100%;
+            max-width: 680px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: #141822;
+            color: var(--text-main);
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            border-color: var(--gold-accent);
+            background: #1c2230;
+        }
+
+        #masterBtn.active {
+            background: #1e293b;
+            border-color: var(--gold-accent);
+            color: var(--gold-accent);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .slider-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .slider-group label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: #2a3242;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold-accent);
+            cursor: pointer;
+        }
+
+        .spatial-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .switch-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 54px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(10, 12, 16, 0.45);
+        }
+
+        .switch-copy {
+            min-width: 0;
+        }
+
+        .switch-title {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-main);
+            letter-spacing: 0.7px;
+            font-weight: 600;
+        }
+
+        .switch-subtitle {
+            display: block;
+            margin-top: 3px;
+            color: var(--text-dim);
+            font-size: 0.66rem;
+            line-height: 1.35;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 46px;
+            height: 24px;
+            flex: 0 0 auto;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            border-radius: 999px;
+            background: #2a3242;
+            border: 1px solid var(--border-color);
+            transition: 0.2s ease;
+        }
+
+        .toggle-track::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 2px;
+            top: 2px;
+            border-radius: 50%;
+            background: var(--text-main);
+            transition: 0.2s ease;
+        }
+
+        .toggle-switch input:checked + .toggle-track {
+            border-color: var(--gold-accent);
+            background: rgba(212, 175, 55, 0.22);
+        }
+
+        .toggle-switch input:checked + .toggle-track::before {
+            transform: translateX(22px);
+            background: var(--gold-accent);
+        }
+
+        .settings-row {
+            margin-top: 12px;
+            margin-bottom: 0;
+        }
+
+        .settings-status {
+            min-height: 17px;
+            margin-top: 7px;
+            color: var(--text-dim);
+            font-size: 0.68rem;
+            text-align: center;
+            letter-spacing: 0.35px;
+        }
+
+        .trajectory-select,
+        .settings-name-input {
+            width: 100%;
+            min-height: 38px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: #141822;
+            color: var(--text-main);
+            padding: 8px 10px;
+            outline: none;
+        }
+
+        .trajectory-select:focus,
+        .settings-name-input:focus {
+            border-color: var(--gold-accent);
+        }
+
+        .trajectory-mode-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(145px, 0.7fr);
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-name-wrap {
+            margin-top: 12px;
+        }
+
+        .settings-name-wrap label {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            letter-spacing: 0.4px;
+        }
+
+        .mirror-key {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .quadrant-controls {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .quadrant-controls-title {
+            font-size: 0.78rem;
+            color: var(--gold-accent);
+            letter-spacing: 1.4px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .quadrant-control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .pair-shift-control {
+            grid-column: 1 / -1;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            background: rgba(18, 22, 30, 0.60);
+        }
+
+        .pair-shift-label {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 7px;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            letter-spacing: 0.35px;
+        }
+
+        .pair-shift-value {
+            color: var(--gold-accent);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .pair-shift-note {
+            margin-top: 5px;
+            font-size: 0.64rem;
+            color: var(--text-dim);
+            line-height: 1.35;
+        }
+
+        .quadrant-card {
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--quad-color);
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(10, 12, 16, 0.45);
+            min-width: 0;
+        }
+
+        .quadrant-card h3 {
+            margin: 0 0 9px;
+            color: var(--text-main);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .freq-control {
+            display: grid;
+            grid-template-columns: 1fr 72px;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .freq-label {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .freq-value {
+            color: var(--quad-color);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .freq-number {
+            width: 72px;
+            min-width: 0;
+            padding: 5px 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: #0d1118;
+            color: var(--text-main);
+            font-size: 0.75rem;
+            text-align: right;
+            outline: none;
+        }
+
+        .freq-number:focus {
+            border-color: var(--quad-color);
+        }
+
+        .quadrant-card input[type="range"]::-webkit-slider-thumb {
+            background: var(--quad-color);
+        }
+
+        .quadrant-card input[type="range"]::-moz-range-thumb {
+            background: var(--quad-color);
+            border: none;
+        }
+
+        @media (max-width: 560px) {
+            .slider-grid,
+            .spatial-controls,
+            .quadrant-control-grid,
+            .quadrant-legend,
+            .trajectory-mode-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .quadrant-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .rf { background: var(--rf-red); box-shadow: 0 0 6px var(--rf-red); }
+        .rp { background: var(--rp-blue); box-shadow: 0 0 6px var(--rp-blue); }
+        .lf { background: var(--lf-green); box-shadow: 0 0 6px var(--lf-green); }
+        .lp { background: var(--lp-yellow); box-shadow: 0 0 6px var(--lp-yellow); }
+    </style>
+</head>
+<body>
+
+    <!-- Transparent Brain Asset Reference -->
+    <img id="brainImg" src="file:///C:/Users/Steph/AppData/Local/Microsoft/Olk/Attachments/ooa-6a6f8176-7954-4ab8-ac0f-ab688bea23e2/c9f1805117362a535649aaea3b84195c7d29c84103752456825f713e20dbe5c9/QBS-01%20__%20Quadratic%20Brain%20Synchronization%20Engine_files/brain_528b.png" style="display: none;" alt="Centered Brain Matrix">
+
+    <header>
+        <h1>QBS-01 // BRAIN SYNCHRONIZATION</h1>
+        <div class="subtitle">NEURO-COGNITIVE BASELINE CALIBRATION ENGINE</div>
+    </header>
+
+    <div id="canvas-container">
+        <canvas id="qbsCanvas" width="600" height="600"></canvas>
+        <div class="overlay-readout" id="readout">
+                        INFINITY &nbsp;|&nbsp;
+                        CENTER A: <span style="color:#3b82f6">Q4 BLUE / RIGHT POSTERIOR</span> |
+                        THERMAL: <strong>COOL</strong> |
+                        CARRIER: 180.0Hz / PULSE: 8.50Hz
+                    </div>
+    </div>
+
+    <div class="control-panel">
+        <div class="btn-row">
+            <button id="masterBtn" onclick="toggleEngine()" class="active">HALT CALIBRATION ENGINE</button>
+            <button onclick="resetEngine()">RESET BASELINE</button>
+        </div>
+
+        <div class="slider-grid">
+            <div class="slider-group">
+                <label>UPPER TRAJECTORY SPEED (0.005 - 0.200 Hz) <span id="upperSpeedVal">0.025 Hz · 20.0 s/upper half</span></label>
+                <input type="range" id="upperSpeedSlider" min="0.005" max="0.200" step="0.005" value="0.025" oninput="updateUpperSpeed(this.value)">
+            </div>
+            <div class="slider-group">
+                <label>LOWER TRAJECTORY SPEED (0.005 - 0.200 Hz) <span id="lowerSpeedVal">0.025 Hz · 20.0 s/lower half</span></label>
+                <input type="range" id="lowerSpeedSlider" min="0.005" max="0.200" step="0.005" value="0.025" oninput="updateLowerSpeed(this.value)">
+            </div>
+            <div class="slider-group">
+                <label>AUDIO GAIN <span id="volVal">30%</span></label>
+                <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.30" oninput="updateVolume(this.value)">
+            </div>
+        </div>
+
+        <div class="spatial-controls">
+            <div class="slider-group">
+                <label>L / R OUTPUT BALANCE <span id="balanceVal">CENTER</span></label>
+                <input type="range" id="balanceSlider" min="-1" max="1" step="0.01" value="0" oninput="updateBalance(this.value)">
+            </div>
+
+            <div class="switch-card trajectory-mode-card">
+                <div class="switch-copy">
+                    <span class="switch-title">TRAJECTORY MODE</span>
+                    <span class="switch-subtitle" id="trajectoryModeSubtitle">INFINITY = figure-8 orbit</span>
+                </div>
+                <select id="trajectoryModeSelect" class="trajectory-select" onchange="setTrajectoryMode(this.value)" title="Select sound-center trajectory">
+                    <option value="infinity" selected="">INFINITY</option>
+                    <option value="circle">CIRCLE</option>
+                    <option value="center">CENTER / NO TRAJECTORY</option>
+                    <option value="horizontal">HORIZONTAL / Q1-Q2</option>
+                </select>
+            </div>
+
+            <div class="switch-card">
+                <div class="switch-copy">
+                    <span class="switch-title">SECOND SOUND CENTER</span>
+                    <span class="switch-subtitle" id="secondCenterSubtitle">Independent source on the same orbit; 180° reproduces the horizontal mirror</span>
+                </div>
+                <label class="toggle-switch" title="Enable second sound center">
+                    <input type="checkbox" id="mirrorToggle" onchange="setMirrorEnabled(this.checked)">
+                    <span class="toggle-track"></span>
+                </label>
+            </div>
+
+            <div class="slider-group">
+                <label>SECOND CENTER PHASE OFFSET <span id="phaseShiftVal">180° · HORIZONTAL MIRROR</span></label>
+                <input type="range" id="phaseShiftSlider" min="0" max="360" step="1" value="180" oninput="updatePhaseShift(this.value)">
+            </div>
+
+            <div class="slider-group">
+                <label>SOURCE B MODULATION PHASE <span id="modPhaseVal">0° · IN PHASE</span></label>
+                <input type="range" id="modPhaseSlider" min="0" max="360" step="1" value="0" oninput="updateModulationPhase(this.value)">
+                <div class="pair-shift-note">Offsets only Source B's smooth pulse modulation. 180° is opposite modulation when A and B use the same pulse frequency.</div>
+            </div>
+
+            <div class="switch-card">
+                <div class="switch-copy">
+                    <span class="switch-title">SECOND SOURCE REVERSE DIRECTION</span>
+                    <span class="switch-subtitle">When enabled, center B moves opposite to center A from its current phase position</span>
+                </div>
+                <label class="toggle-switch" title="Reverse only the second sound center">
+                    <input type="checkbox" id="secondReverseToggle" onchange="setSecondSourceReverse(this.checked)">
+                    <span class="toggle-track"></span>
+                </label>
+            </div>
+
+            <div class="switch-card">
+                <div class="switch-copy">
+                    <span class="switch-title">REVERSE TRAJECTORY DIRECTION</span>
+                    <span class="switch-subtitle">Move the primary trajectory direction in reverse; center B follows or opposes it according to its own switch</span>
+                </div>
+                <label class="toggle-switch" title="Reverse trajectory direction">
+                    <input type="checkbox" id="reverseToggle" onchange="setReverseDirection(this.checked)">
+                    <span class="toggle-track"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-name-wrap">
+            <label for="settingsNameInput"><span>SETTINGS FILE NAME</span><span id="loadedFileName">NOT SAVED</span></label>
+            <input id="settingsNameInput" class="settings-name-input" type="text" value="preset" maxlength="80" placeholder="e.g. meditation-10hz" oninput="updateSettingsName(this.value)">
+        </div>
+        <div class="btn-row settings-row">
+            <button type="button" onclick="saveSettings()">SAVE SETTINGS</button>
+            <button type="button" onclick="document.getElementById('settingsFile').click()">LOAD SETTINGS</button>
+            <input id="settingsFile" type="file" accept="application/json,.json" style="display:none" onchange="loadSettingsFile(event)">
+        </div>
+        <div class="settings-status" id="settingsStatus">SETTINGS: UNSAVED SESSION</div>
+
+        <div class="quadrant-controls">
+            <div class="quadrant-controls-title">Quadrant Frequency Tuning</div>
+            <div class="quadrant-control-grid">
+                <div class="pair-shift-control">
+                    <label class="pair-shift-label" for="topPairCarrierSlider">
+                        <span>GREEN + RED // JOINT CARRIER SHIFT</span>
+                        <span class="pair-shift-value" id="topPairCarrierVal">CENTER 205.00 Hz · R−L +10.0 Hz</span>
+                    </label>
+                    <input type="range" id="topPairCarrierSlider" min="25.00" max="295.00" step="0.1" value="205" oninput="updatePairCarrierCenter('top', this.value)">
+                    <div class="pair-shift-note">Moves both upper carrier frequencies by the same Hz amount; their relative difference is preserved.</div>
+                </div>
+
+                <div class="quadrant-card" style="--quad-color: var(--lf-green);">
+                    <h3>Q1 // LEFT FRONTAL // GREEN</h3>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q1Carrier">CARRIER <span class="freq-value" id="q1CarrierVal">200.0 Hz</span></label>
+                        <input type="range" id="q1Carrier" min="20" max="300" step="0.1" value="200" oninput="updateQuadrantFrequency(1, 'carrier', this.value)">
+                        <input class="freq-number" id="q1CarrierNum" type="number" min="20" max="300" step="0.1" value="200.0" oninput="updateQuadrantFrequency(1, 'carrier', this.value)">
+                    </div>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q1Pulse">PULSE <span class="freq-value" id="q1PulseVal">12.00 Hz</span></label>
+                        <input type="range" id="q1Pulse" min="0" max="20" step="0.01" value="12.00" oninput="updateQuadrantFrequency(1, 'pulse', this.value)">
+                        <input class="freq-number" id="q1PulseNum" type="number" min="0" max="20" step="0.01" value="12.00" oninput="updateQuadrantFrequency(1, 'pulse', this.value)">
+                    </div>
+                </div>
+
+                <div class="quadrant-card" style="--quad-color: var(--rf-red);">
+                    <h3>Q2 // RIGHT FRONTAL // RED</h3>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q2Carrier">CARRIER <span class="freq-value" id="q2CarrierVal">210.0 Hz</span></label>
+                        <input type="range" id="q2Carrier" min="20" max="300" step="0.1" value="210" oninput="updateQuadrantFrequency(2, 'carrier', this.value)">
+                        <input class="freq-number" id="q2CarrierNum" type="number" min="20" max="300" step="0.1" value="210.0" oninput="updateQuadrantFrequency(2, 'carrier', this.value)">
+                    </div>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q2Pulse">PULSE <span class="freq-value" id="q2PulseVal">10.00 Hz</span></label>
+                        <input type="range" id="q2Pulse" min="0" max="20" step="0.01" value="10.00" oninput="updateQuadrantFrequency(2, 'pulse', this.value)">
+                        <input class="freq-number" id="q2PulseNum" type="number" min="0" max="20" step="0.01" value="10.00" oninput="updateQuadrantFrequency(2, 'pulse', this.value)">
+                    </div>
+                </div>
+
+                <div class="pair-shift-control">
+                    <label class="pair-shift-label" for="bottomPairCarrierSlider">
+                        <span>YELLOW + BLUE // JOINT CARRIER SHIFT</span>
+                        <span class="pair-shift-value" id="bottomPairCarrierVal">CENTER 185.00 Hz · R−L -10.0 Hz</span>
+                    </label>
+                    <input type="range" id="bottomPairCarrierSlider" min="25.00" max="295.00" step="0.1" value="185" oninput="updatePairCarrierCenter('bottom', this.value)">
+                    <div class="pair-shift-note">Moves both lower carrier frequencies by the same Hz amount; their relative difference is preserved.</div>
+                </div>
+
+                <div class="quadrant-card" style="--quad-color: var(--lp-yellow);">
+                    <h3>Q3 // LEFT POSTERIOR // YELLOW</h3>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q3Carrier">CARRIER <span class="freq-value" id="q3CarrierVal">190.0 Hz</span></label>
+                        <input type="range" id="q3Carrier" min="20" max="300" step="0.1" value="190" oninput="updateQuadrantFrequency(3, 'carrier', this.value)">
+                        <input class="freq-number" id="q3CarrierNum" type="number" min="20" max="300" step="0.1" value="190.0" oninput="updateQuadrantFrequency(3, 'carrier', this.value)">
+                    </div>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q3Pulse">PULSE <span class="freq-value" id="q3PulseVal">7.83 Hz</span></label>
+                        <input type="range" id="q3Pulse" min="0" max="20" step="0.01" value="7.83" oninput="updateQuadrantFrequency(3, 'pulse', this.value)">
+                        <input class="freq-number" id="q3PulseNum" type="number" min="0" max="20" step="0.01" value="7.83" oninput="updateQuadrantFrequency(3, 'pulse', this.value)">
+                    </div>
+                </div>
+
+                <div class="quadrant-card" style="--quad-color: var(--rp-blue);">
+                    <h3>Q4 // RIGHT POSTERIOR // BLUE</h3>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q4Carrier">CARRIER <span class="freq-value" id="q4CarrierVal">180.0 Hz</span></label>
+                        <input type="range" id="q4Carrier" min="20" max="300" step="0.1" value="180" oninput="updateQuadrantFrequency(4, 'carrier', this.value)">
+                        <input class="freq-number" id="q4CarrierNum" type="number" min="20" max="300" step="0.1" value="180.0" oninput="updateQuadrantFrequency(4, 'carrier', this.value)">
+                    </div>
+                    <div class="freq-control">
+                        <label class="freq-label" for="q4Pulse">PULSE <span class="freq-value" id="q4PulseVal">8.50 Hz</span></label>
+                        <input type="range" id="q4Pulse" min="0" max="20" step="0.01" value="8.50" oninput="updateQuadrantFrequency(4, 'pulse', this.value)">
+                        <input class="freq-number" id="q4PulseNum" type="number" min="0" max="20" step="0.01" value="8.50" oninput="updateQuadrantFrequency(4, 'pulse', this.value)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quadrant-legend">
+            <div class="legend-item"><div class="dot lf"></div> Q1: Left Frontal (Green | Cool)</div>
+            <div class="legend-item"><div class="dot rf"></div> Q2: Right Frontal (Red | Warm)</div>
+            <div class="legend-item"><div class="dot lp"></div> Q3: Left Posterior (Yellow | Warm)</div>
+            <div class="legend-item"><div class="dot rp"></div> Q4: Right Posterior (Blue | Cool)</div>
+        </div>
+    </div>
+
+    <script>
+        // QBS-01 Quadrant Coordinates & Specifications
+        const quadrants = [
+            { id: 1, name: "Q1 Green / Left Frontal", color: "#22c55e", rgb: [34, 197, 94], thermal: "Cool", x: 180, y: 180, carrier: 200, pulse: 12.0 },
+            { id: 2, name: "Q2 Red / Right Frontal", color: "#ef4444", rgb: [239, 68, 68], thermal: "Warm", x: 420, y: 180, carrier: 210, pulse: 10.0 },
+            { id: 3, name: "Q3 Yellow / Left Posterior", color: "#eab308", rgb: [234, 179, 8], thermal: "Warm", x: 180, y: 420, carrier: 190, pulse: 7.83 },
+            { id: 4, name: "Q4 Blue / Right Posterior", color: "#3b82f6", rgb: [59, 130, 246], thermal: "Cool", x: 420, y: 420, carrier: 180, pulse: 8.5 }
+        ];
+
+        // Factory baseline values used by RESET BASELINE. Values stay attached to their colors.
+        const baselineFrequencies = {
+            1: { carrier: 200.0, pulse: 12.00 }, // Green
+            2: { carrier: 210.0, pulse: 10.00 }, // Red
+            3: { carrier: 190.0, pulse: 7.83 },  // Yellow
+            4: { carrier: 180.0, pulse: 8.50 }   // Blue
+        };
+
+        // Joint carrier controls. IDs are ordered left -> right on the canvas:
+        // upper = Green (Q1) -> Red (Q2), lower = Yellow (Q3) -> Blue (Q4).
+        const carrierPairs = {
+            top: { ids: [1, 2], sliderId: "topPairCarrierSlider", readoutId: "topPairCarrierVal" },
+            bottom: { ids: [3, 4], sliderId: "bottomPairCarrierSlider", readoutId: "bottomPairCarrierVal" }
+        };
+        let updatingCarrierPair = false;
+
+        let canvas, ctx;
+        let isActive = false;
+        let t = 0; // Normalized animation phase: 0..1
+        let upperCycleHz = 0.025; // Speed while tracer is above the horizontal centerline
+        let lowerCycleHz = 0.025; // Speed while tracer is below the horizontal centerline
+        let lastFrameTimestamp = null; // Used for frame-rate independent timing
+        let audioCtx = null;
+        let masterGain = null;
+        let balanceSplitter = null;
+        let balanceMerger = null;
+        let balanceLeftGain = null;
+        let balanceRightGain = null;
+        let primarySource = null;
+        let mirrorSource = null;
+        let balanceValue = 0;
+        let mirrorEnabled = false;
+        let secondPhaseDegrees = 180; // Fixed orbit phase offset while both centers move in the same direction
+        let secondModulationPhaseDegrees = 0; // Smooth pulse/LFO phase offset applied only to Source B
+        let secondSourceReverse = false;
+        let secondT = 0.5; // Independent phase used only while center B moves in the opposite direction
+        let reverseDirection = false;
+        let trajectoryMode = "infinity"; // "infinity", "circle", stationary "center", or static "horizontal"
+        let currentSettingsName = "preset";
+
+        window.onload = () => {
+            canvas = document.getElementById("qbsCanvas");
+            ctx = canvas.getContext("2d");
+
+            // If the tab/window is suspended, restart timing from the first
+            // visible frame so the tracer does not jump forward on resume.
+            document.addEventListener("visibilitychange", () => {
+                if (!document.hidden) lastFrameTimestamp = null;
+            });
+
+            syncPairCarrierSlider("top");
+            syncPairCarrierSlider("bottom");
+            syncSettingsNameField();
+            setTrajectoryMode(trajectoryMode);
+            requestAnimationFrame(render);
+        };
+
+        function toggleEngine() {
+            if (!isActive) {
+                startEngine();
+            } else {
+                stopEngine();
+            }
+        }
+
+        function createSoundSource() {
+            if (!audioCtx || !masterGain) return null;
+
+            const source = {
+                panner: audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null,
+                carrierOsc: audioCtx.createOscillator(),
+                pulseOsc: audioCtx.createOscillator(),
+                pulsePhaseDelay: audioCtx.createDelay(2.0),
+                pulseDepth: audioCtx.createGain(),
+                pulseGain: audioCtx.createGain(),
+                outputGain: audioCtx.createGain(),
+                currentPulseHz: 10.0
+            };
+
+            // Main audible tone.
+            source.carrierOsc.type = 'sine';
+
+            // Smooth pulse modulation.  The previous sawtooth LFO jumped from
+            // +1 to -1 at the end of every cycle, which made the carrier gain
+            // jump abruptly and produced audible spikes/clicks.  A sine LFO
+            // has no discontinuity, so the pulse is heard as a smooth tremolo.
+            source.pulseOsc.type = 'sine';
+
+            // Keep the modulation strictly positive instead of allowing the
+            // gain to hit zero or invert polarity.  With a sine LFO in [-1,1],
+            // this gives a smooth gain range of 0.30 .. 1.00.
+            source.pulseGain.gain.setValueAtTime(0.65, audioCtx.currentTime);
+            source.pulseDepth.gain.setValueAtTime(0.35, audioCtx.currentTime);
+
+            source.carrierOsc.connect(source.pulseGain);
+            // Route the LFO through a delay stage. Source A keeps this at 0 s;
+            // Source B uses it to express the requested modulation phase offset.
+            source.pulseOsc.connect(source.pulsePhaseDelay);
+            source.pulsePhaseDelay.connect(source.pulseDepth);
+            source.pulseDepth.connect(source.pulseGain.gain);
+
+            if (source.panner) {
+                source.pulseGain.connect(source.panner);
+                source.panner.connect(source.outputGain);
+            } else {
+                source.pulseGain.connect(source.outputGain);
+            }
+            source.outputGain.connect(masterGain);
+            source.carrierOsc.start();
+            source.pulseOsc.start();
+            return source;
+        }
+
+        function stopSoundSource(source) {
+            if (!source) return;
+            try { source.carrierOsc.stop(); } catch (e) {}
+            try { source.pulseOsc.stop(); } catch (e) {}
+            try { source.pulsePhaseDelay.disconnect(); } catch (e) {}
+            try { source.pulseDepth.disconnect(); } catch (e) {}
+            try { source.pulseGain.disconnect(); } catch (e) {}
+            try { source.outputGain.disconnect(); } catch (e) {}
+        }
+
+        function updateSourceMix() {
+            if (!audioCtx) return;
+            const dual = mirrorEnabled && mirrorSource;
+            const eachGain = dual ? 0.5 : 1.0;
+            if (primarySource) {
+                primarySource.outputGain.gain.setTargetAtTime(eachGain, audioCtx.currentTime, 0.03);
+            }
+            if (mirrorSource) {
+                mirrorSource.outputGain.gain.setTargetAtTime(0.5, audioCtx.currentTime, 0.03);
+            }
+        }
+
+        function buildMasterOutput() {
+            masterGain = audioCtx.createGain();
+            balanceSplitter = audioCtx.createChannelSplitter(2);
+            balanceMerger = audioCtx.createChannelMerger(2);
+            balanceLeftGain = audioCtx.createGain();
+            balanceRightGain = audioCtx.createGain();
+
+            masterGain.connect(balanceSplitter);
+            balanceSplitter.connect(balanceLeftGain, 0);
+            balanceSplitter.connect(balanceRightGain, 1);
+            balanceLeftGain.connect(balanceMerger, 0, 0);
+            balanceRightGain.connect(balanceMerger, 0, 1);
+            balanceMerger.connect(audioCtx.destination);
+
+            updateVolume(document.getElementById("volSlider").value);
+            updateBalance(document.getElementById("balanceSlider").value);
+        }
+
+        function startEngine() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            buildMasterOutput();
+            primarySource = createSoundSource();
+            if (mirrorEnabled) {
+                mirrorSource = createSoundSource();
+                applyModulationPhaseToSourceB();
+            }
+            updateSourceMix();
+
+            isActive = true;
+            document.getElementById("masterBtn").classList.add("active");
+            document.getElementById("masterBtn").innerText = "HALT CALIBRATION ENGINE";
+        }
+
+        function stopEngine() {
+            stopSoundSource(primarySource);
+            stopSoundSource(mirrorSource);
+            primarySource = null;
+            mirrorSource = null;
+
+            if (masterGain) {
+                try { masterGain.disconnect(); } catch (e) {}
+            }
+            if (balanceMerger) {
+                try { balanceMerger.disconnect(); } catch (e) {}
+            }
+            masterGain = null;
+            balanceSplitter = null;
+            balanceMerger = null;
+            balanceLeftGain = null;
+            balanceRightGain = null;
+
+            isActive = false;
+            document.getElementById("masterBtn").classList.remove("active");
+            document.getElementById("masterBtn").innerText = "ENGAGE QBS ENGINE";
+            document.getElementById("readout").innerHTML = "PHASE: STANDBY // CALIBRATION PAUSED";
+        }
+
+        function resetEngine() {
+            stopEngine();
+            t = 0;
+            updateUpperSpeed(0.025);
+            updateLowerSpeed(0.025);
+            updateVolume(0.30);
+            updateBalance(0);
+            updatePhaseShift(180);
+            updateModulationPhase(0);
+            setMirrorEnabled(false);
+            setSecondSourceReverse(false);
+            setReverseDirection(false);
+            setTrajectoryMode("infinity");
+
+            Object.entries(baselineFrequencies).forEach(([id, values]) => {
+                updateQuadrantFrequency(Number(id), "carrier", values.carrier);
+                updateQuadrantFrequency(Number(id), "pulse", values.pulse);
+            });
+            setSettingsStatus("SETTINGS: FACTORY BASELINE RESTORED");
+        }
+
+        function updateTrajectorySpeed(region, val) {
+            let value = parseFloat(val);
+            if (!Number.isFinite(value)) return;
+            value = Math.max(0.005, Math.min(0.200, value));
+
+            const isUpper = region === "upper";
+            if (isUpper) upperCycleHz = value;
+            else lowerCycleHz = value;
+
+            const slider = document.getElementById(isUpper ? "upperSpeedSlider" : "lowerSpeedSlider");
+            const readout = document.getElementById(isUpper ? "upperSpeedVal" : "lowerSpeedVal");
+            if (slider) slider.value = value.toFixed(3);
+
+            // Each region occupies one half of the normalized trajectory phase.
+            // At rate f, that half therefore takes 0.5 / f seconds to traverse.
+            const halfSeconds = 0.5 / value;
+            if (readout) {
+                readout.innerText = value.toFixed(3) + " Hz · " + halfSeconds.toFixed(1) +
+                    (isUpper ? " s/upper half" : " s/lower half");
+            }
+        }
+
+        function updateUpperSpeed(val) {
+            updateTrajectorySpeed("upper", val);
+        }
+
+        function updateLowerSpeed(val) {
+            updateTrajectorySpeed("lower", val);
+        }
+
+        // AUDIO GAIN CALIBRATION: UI 0–100% maps directly to master gain 0.0–1.0.
+        // Earlier versions multiplied this value by 0.25, limiting maximum output.
+        function updateVolume(val) {
+            let value = parseFloat(val);
+            if (!Number.isFinite(value)) return;
+            value = Math.max(0, Math.min(1, value));
+            document.getElementById("volSlider").value = value;
+            document.getElementById("volVal").innerText = Math.round(value * 100) + "%";
+            if (masterGain && audioCtx) {
+                masterGain.gain.setTargetAtTime(value, audioCtx.currentTime, 0.03);
+            }
+        }
+
+        function updateBalance(val) {
+            let value = parseFloat(val);
+            if (!Number.isFinite(value)) return;
+            value = Math.max(-1, Math.min(1, value));
+            balanceValue = value;
+            document.getElementById("balanceSlider").value = value;
+
+            let label = "CENTER";
+            if (value < -0.005) label = Math.round(Math.abs(value) * 100) + "% LEFT";
+            if (value > 0.005) label = Math.round(value * 100) + "% RIGHT";
+            document.getElementById("balanceVal").innerText = label;
+
+            // True output balance: attenuate the opposite channel while preserving the favored channel.
+            if (audioCtx && balanceLeftGain && balanceRightGain) {
+                const left = value <= 0 ? 1 : 1 - value;
+                const right = value >= 0 ? 1 : 1 + value;
+                balanceLeftGain.gain.setTargetAtTime(left, audioCtx.currentTime, 0.03);
+                balanceRightGain.gain.setTargetAtTime(right, audioCtx.currentTime, 0.03);
+            }
+        }
+
+        function setMirrorEnabled(enabled) {
+            mirrorEnabled = Boolean(enabled);
+            const toggle = document.getElementById("mirrorToggle");
+            if (toggle) toggle.checked = mirrorEnabled;
+
+            // Whenever B is enabled, initialize its independent phase from the
+            // currently requested phase offset. This matters if B is in reverse mode.
+            if (mirrorEnabled) {
+                secondT = ((t + secondPhaseDegrees / 360) % 1 + 1) % 1;
+            }
+
+            if (isActive && audioCtx) {
+                if (mirrorEnabled && !mirrorSource) {
+                    mirrorSource = createSoundSource();
+                    applyModulationPhaseToSourceB();
+                } else if (!mirrorEnabled && mirrorSource) {
+                    stopSoundSource(mirrorSource);
+                    mirrorSource = null;
+                }
+                updateSourceMix();
+            }
+        }
+
+        function updatePhaseShift(val) {
+            let value = parseFloat(val);
+            if (!Number.isFinite(value)) return;
+            value = Math.max(0, Math.min(360, value));
+            secondPhaseDegrees = value;
+
+            // In opposite-direction mode this control acts as an immediate phase
+            // reposition/starting separation. B then continues independently.
+            if (secondSourceReverse) {
+                secondT = ((t + secondPhaseDegrees / 360) % 1 + 1) % 1;
+            }
+
+            const slider = document.getElementById("phaseShiftSlider");
+            const readout = document.getElementById("phaseShiftVal");
+            if (slider) slider.value = value.toFixed(0);
+
+            let suffix = "";
+            if (secondSourceReverse) {
+                if (Math.abs(value) < 0.5 || Math.abs(value - 360) < 0.5) suffix = " · SAME START PHASE";
+                else suffix = " · START OFFSET";
+            } else {
+                if (Math.abs(value) < 0.5 || Math.abs(value - 360) < 0.5) suffix = " · COINCIDENT";
+                else if (Math.abs(value - 180) < 0.5) {
+                    if (trajectoryMode === "circle") suffix = " · OPPOSITE SIDE";
+                    else if (trajectoryMode === "center" || trajectoryMode === "horizontal") suffix = " · NO SPATIAL EFFECT";
+                    else suffix = " · HORIZONTAL MIRROR";
+                }
+            }
+            if (readout) readout.innerText = value.toFixed(0) + "°" + suffix;
+        }
+
+        function modulationPhaseDelaySeconds(phaseDegrees, pulseHz) {
+            const hz = Number(pulseHz);
+            if (!Number.isFinite(hz) || hz <= 0) return 0;
+            // 360° is acoustically identical to 0°, so avoid adding a full-cycle latency.
+            const normalized = Math.abs(phaseDegrees - 360) < 0.5 ? 0 : ((phaseDegrees % 360) + 360) % 360;
+            return (normalized / 360) / hz;
+        }
+
+        function applyModulationPhaseToSourceB() {
+            if (!audioCtx || !mirrorSource || !mirrorSource.pulsePhaseDelay) return;
+            const delaySeconds = modulationPhaseDelaySeconds(secondModulationPhaseDegrees, mirrorSource.currentPulseHz);
+            mirrorSource.pulsePhaseDelay.delayTime.setTargetAtTime(delaySeconds, audioCtx.currentTime, 0.02);
+        }
+
+        function updateModulationPhase(val) {
+            let value = parseFloat(val);
+            if (!Number.isFinite(value)) return;
+            value = Math.max(0, Math.min(360, value));
+            secondModulationPhaseDegrees = value;
+
+            const slider = document.getElementById("modPhaseSlider");
+            const readout = document.getElementById("modPhaseVal");
+            if (slider) slider.value = value.toFixed(0);
+
+            let suffix = "";
+            if (Math.abs(value) < 0.5 || Math.abs(value - 360) < 0.5) suffix = " · IN PHASE";
+            else if (Math.abs(value - 180) < 0.5) suffix = " · OPPOSITE";
+            else if (Math.abs(value - 90) < 0.5) suffix = " · QUARTER CYCLE";
+            else if (Math.abs(value - 270) < 0.5) suffix = " · THREE-QUARTER CYCLE";
+            if (readout) readout.innerText = value.toFixed(0) + "°" + suffix;
+
+            applyModulationPhaseToSourceB();
+        }
+
+        function setSecondSourceReverse(enabled) {
+            const next = Boolean(enabled);
+
+            if (next && !secondSourceReverse) {
+                // Enter reverse mode without a positional jump.
+                secondT = ((t + secondPhaseDegrees / 360) % 1 + 1) % 1;
+            } else if (!next && secondSourceReverse) {
+                // Leave reverse mode without a positional jump: convert B's current
+                // location into a new fixed phase offset relative to A.
+                const delta = ((secondT - t) % 1 + 1) % 1;
+                secondPhaseDegrees = delta * 360;
+            }
+
+            secondSourceReverse = next;
+            const toggle = document.getElementById("secondReverseToggle");
+            if (toggle) toggle.checked = secondSourceReverse;
+
+            // Refresh slider/readout without changing B after the no-jump conversion.
+            const slider = document.getElementById("phaseShiftSlider");
+            if (slider) slider.value = secondPhaseDegrees.toFixed(0);
+            updatePhaseShift(secondPhaseDegrees);
+        }
+
+        function setReverseDirection(enabled) {
+            reverseDirection = Boolean(enabled);
+            const toggle = document.getElementById("reverseToggle");
+            if (toggle) toggle.checked = reverseDirection;
+        }
+
+        function setTrajectoryMode(mode) {
+            trajectoryMode = ["infinity", "circle", "center", "horizontal"].includes(mode) ? mode : "infinity";
+            const select = document.getElementById("trajectoryModeSelect");
+            if (select) select.value = trajectoryMode;
+
+            // Horizontal mode is defined as a two-source layout, so ensure B is enabled.
+            const mirrorToggle = document.getElementById("mirrorToggle");
+            if (trajectoryMode === "horizontal") {
+                if (!mirrorEnabled) setMirrorEnabled(true);
+                if (mirrorToggle) mirrorToggle.disabled = true;
+            } else if (mirrorToggle) {
+                mirrorToggle.disabled = false;
+            }
+
+            const subtitle = document.getElementById("trajectoryModeSubtitle");
+            if (subtitle) {
+                if (trajectoryMode === "circle") {
+                    subtitle.textContent = "CIRCLE = circular orbit; upper/lower speeds apply to each semicircle";
+                } else if (trajectoryMode === "center") {
+                    subtitle.textContent = "CENTER = no orbit; Source A uses Q1 Green, optional Source B uses Q2 Red";
+                } else if (trajectoryMode === "horizontal") {
+                    subtitle.textContent = "HORIZONTAL = two static sources, equally spaced left/right of center: Q1 Green + Q2 Red";
+                } else {
+                    subtitle.textContent = "INFINITY = figure-8 orbit";
+                }
+            }
+
+            const secondCenterSubtitle = document.getElementById("secondCenterSubtitle");
+            if (secondCenterSubtitle) {
+                if (trajectoryMode === "circle") {
+                    secondCenterSubtitle.textContent = "Independent source on the same orbit; 180° places B on the opposite side of the circle";
+                } else if (trajectoryMode === "center") {
+                    secondCenterSubtitle.textContent = "CENTER mode: Source A = Q1 Green, Source B = Q2 Red; both stay spatially centered";
+                } else if (trajectoryMode === "horizontal") {
+                    secondCenterSubtitle.textContent = "HORIZONTAL mode requires both sources: A = Q1 Green on left, B = Q2 Red on right";
+                } else {
+                    secondCenterSubtitle.textContent = "Independent source on the same orbit; 180° reproduces the horizontal mirror";
+                }
+            }
+
+            updatePhaseShift(secondPhaseDegrees);
+        }
+
+        function setSettingsStatus(message) {
+            const el = document.getElementById("settingsStatus");
+            if (el) el.textContent = message;
+        }
+
+        function collectSettings() {
+            return {
+                format: "QBS-01-settings",
+                version: 13,
+                quadrantLayout: "q1-green-q2-red-q3-yellow-q4-blue",
+                name: currentSettingsName,
+                // Keep cycleHz for backward compatibility with older QBS versions.
+                cycleHz: upperCycleHz,
+                upperCycleHz: upperCycleHz,
+                lowerCycleHz: lowerCycleHz,
+                volume: parseFloat(document.getElementById("volSlider").value),
+                balance: balanceValue,
+                mirrorEnabled: mirrorEnabled,
+                secondPhaseDegrees: secondPhaseDegrees,
+                secondModulationPhaseDegrees: secondModulationPhaseDegrees,
+                secondSourceReverse: secondSourceReverse,
+                reverseDirection: reverseDirection,
+                trajectoryMode: trajectoryMode,
+                quadrants: quadrants
+                    .slice()
+                    .sort((a, b) => a.id - b.id)
+                    .map(q => ({ id: q.id, carrier: q.carrier, pulse: q.pulse }))
+            };
+        }
+
+        function sanitizeSettingsName(name) {
+            const cleaned = String(name || "")
+                .trim()
+                .replace(/[\\/:*?"<>|]+/g, "-")
+                .replace(/\s+/g, " ")
+                .slice(0, 80);
+            return cleaned || "preset";
+        }
+
+        function updateSettingsName(value) {
+            currentSettingsName = sanitizeSettingsName(value);
+        }
+
+        function syncSettingsNameField() {
+            const input = document.getElementById("settingsNameInput");
+            if (input) input.value = currentSettingsName;
+        }
+
+        function saveSettings() {
+            const nameInput = document.getElementById("settingsNameInput");
+            currentSettingsName = sanitizeSettingsName(nameInput ? nameInput.value : currentSettingsName);
+            syncSettingsNameField();
+
+            const settings = collectSettings();
+            settings.name = currentSettingsName;
+
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const fileSafeName = currentSettingsName.replace(/\s+/g, "_");
+            const actualFileName = `QBS-01_${fileSafeName}.json`;
+            link.href = url;
+            link.download = actualFileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+            const loadedFileName = document.getElementById("loadedFileName");
+            if (loadedFileName) loadedFileName.textContent = actualFileName;
+            setSettingsStatus(`SETTINGS: SAVED ${actualFileName}`);
+        }
+
+        function applySettings(settings) {
+            if (!settings || typeof settings !== "object") throw new Error("Invalid settings object");
+            if (settings.format && settings.format !== "QBS-01-settings") {
+                throw new Error("This file is not a QBS-01 settings file");
+            }
+            if (typeof settings.name === "string" && settings.name.trim()) {
+                currentSettingsName = sanitizeSettingsName(settings.name);
+            }
+            syncSettingsNameField();
+
+            // v3 settings can store upper/lower speeds independently.
+            // Older settings only contain cycleHz; in that case apply it to both halves.
+            const hasUpper = Number.isFinite(Number(settings.upperCycleHz));
+            const hasLower = Number.isFinite(Number(settings.lowerCycleHz));
+            if (hasUpper) updateUpperSpeed(Number(settings.upperCycleHz));
+            if (hasLower) updateLowerSpeed(Number(settings.lowerCycleHz));
+            if (!hasUpper && !hasLower && Number.isFinite(Number(settings.cycleHz))) {
+                updateUpperSpeed(Number(settings.cycleHz));
+                updateLowerSpeed(Number(settings.cycleHz));
+            }
+            if (Number.isFinite(Number(settings.volume))) updateVolume(Number(settings.volume));
+            if (Number.isFinite(Number(settings.balance))) updateBalance(Number(settings.balance));
+            if (Number.isFinite(Number(settings.secondPhaseDegrees))) updatePhaseShift(Number(settings.secondPhaseDegrees));
+            else updatePhaseShift(180); // Older files reproduce the original mirrored second-center behavior.
+            if (Number.isFinite(Number(settings.secondModulationPhaseDegrees))) updateModulationPhase(Number(settings.secondModulationPhaseDegrees));
+            else updateModulationPhase(0); // Older files keep Source B modulation in phase with A.
+            if (typeof settings.secondSourceReverse === "boolean") setSecondSourceReverse(settings.secondSourceReverse);
+            else setSecondSourceReverse(false);
+            if (typeof settings.mirrorEnabled === "boolean") setMirrorEnabled(settings.mirrorEnabled);
+            if (typeof settings.reverseDirection === "boolean") setReverseDirection(settings.reverseDirection);
+            setTrajectoryMode(["infinity", "circle", "center", "horizontal"].includes(settings.trajectoryMode) ? settings.trajectoryMode : "infinity");
+
+            if (Array.isArray(settings.quadrants)) {
+                // v20 normalized the quadrant IDs to:
+                // Q1 Green UL, Q2 Red UR, Q3 Yellow LL, Q4 Blue LR.
+                // Older files used Q1 Red, Q2 Blue, Q3 Green, Q4 Yellow.
+                // Migrate old presets by color so their frequencies remain attached to the same color.
+                const newLayout = settings.quadrantLayout === "q1-green-q2-red-q3-yellow-q4-blue";
+                const legacyToCurrentId = { 1: 2, 2: 4, 3: 1, 4: 3 };
+                settings.quadrants.forEach(item => {
+                    const savedId = Number(item.id);
+                    if (![1, 2, 3, 4].includes(savedId)) return;
+                    const id = newLayout ? savedId : legacyToCurrentId[savedId];
+                    if (Number.isFinite(Number(item.carrier))) updateQuadrantFrequency(id, "carrier", Number(item.carrier));
+                    if (Number.isFinite(Number(item.pulse))) updateQuadrantFrequency(id, "pulse", Number(item.pulse));
+                });
+            }
+        }
+
+        function loadSettingsFile(event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const settings = JSON.parse(reader.result);
+                    applySettings(settings);
+                    const presetName = settings && typeof settings.name === "string" && settings.name.trim()
+                        ? sanitizeSettingsName(settings.name)
+                        : sanitizeSettingsName(file.name.replace(/\.json$/i, ""));
+                    currentSettingsName = presetName;
+                    syncSettingsNameField();
+                    const loadedFileName = document.getElementById("loadedFileName");
+                    if (loadedFileName) loadedFileName.textContent = file.name;
+                    setSettingsStatus(`SETTINGS: LOADED ${file.name} · PRESET "${presetName}"`);
+                } catch (err) {
+                    setSettingsStatus("SETTINGS ERROR: " + err.message);
+                } finally {
+                    input.value = "";
+                }
+            };
+            reader.onerror = () => {
+                setSettingsStatus("SETTINGS ERROR: COULD NOT READ FILE");
+                input.value = "";
+            };
+            reader.readAsText(file);
+        }
+
+        function getCarrierBounds(id) {
+            return { min: 20, max: 300 };
+        }
+
+        function syncPairCarrierSlider(pairKey) {
+            const pair = carrierPairs[pairKey];
+            if (!pair) return;
+
+            const leftQuad = quadrants.find(q => q.id === pair.ids[0]);
+            const rightQuad = quadrants.find(q => q.id === pair.ids[1]);
+            const slider = document.getElementById(pair.sliderId);
+            const readout = document.getElementById(pair.readoutId);
+            if (!leftQuad || !rightQuad || !slider || !readout) return;
+
+            // Keep the current right-minus-left carrier delta fixed.  The pair
+            // slider controls the arithmetic center, so both carriers translate
+            // by exactly the same amount when the slider moves.
+            const delta = rightQuad.carrier - leftQuad.carrier;
+            const center = (leftQuad.carrier + rightQuad.carrier) / 2;
+            const leftBounds = getCarrierBounds(leftQuad.id);
+            const rightBounds = getCarrierBounds(rightQuad.id);
+
+            const minCenter = Math.max(
+                leftBounds.min + delta / 2,
+                rightBounds.min - delta / 2
+            );
+            const maxCenter = Math.min(
+                leftBounds.max + delta / 2,
+                rightBounds.max - delta / 2
+            );
+
+            slider.min = minCenter.toFixed(2);
+            slider.max = maxCenter.toFixed(2);
+            slider.value = Math.max(minCenter, Math.min(maxCenter, center)).toFixed(2);
+
+            const signedDelta = (delta >= 0 ? "+" : "") + delta.toFixed(1);
+            readout.innerText = `CENTER ${center.toFixed(2)} Hz · R−L ${signedDelta} Hz`;
+        }
+
+        function updatePairCarrierCenter(pairKey, rawValue) {
+            const pair = carrierPairs[pairKey];
+            if (!pair) return;
+
+            const leftQuad = quadrants.find(q => q.id === pair.ids[0]);
+            const rightQuad = quadrants.find(q => q.id === pair.ids[1]);
+            if (!leftQuad || !rightQuad) return;
+
+            const delta = rightQuad.carrier - leftQuad.carrier;
+            const leftBounds = getCarrierBounds(leftQuad.id);
+            const rightBounds = getCarrierBounds(rightQuad.id);
+            const minCenter = Math.max(
+                leftBounds.min + delta / 2,
+                rightBounds.min - delta / 2
+            );
+            const maxCenter = Math.min(
+                leftBounds.max + delta / 2,
+                rightBounds.max - delta / 2
+            );
+
+            let center = parseFloat(rawValue);
+            if (!Number.isFinite(center)) return;
+            center = Math.max(minCenter, Math.min(maxCenter, center));
+
+            // One shared shift: left = center - delta/2, right = center + delta/2.
+            // updateQuadrantFrequency rounds both to the normal 0.1 Hz carrier grid.
+            updatingCarrierPair = true;
+            updateQuadrantFrequency(leftQuad.id, "carrier", center - delta / 2);
+            updateQuadrantFrequency(rightQuad.id, "carrier", center + delta / 2);
+            updatingCarrierPair = false;
+
+            syncPairCarrierSlider(pairKey);
+        }
+
+        function updateQuadrantFrequency(id, parameter, rawValue) {
+            const quad = quadrants.find(q => q.id === id);
+            if (!quad || (parameter !== "carrier" && parameter !== "pulse")) return;
+
+            // All four quadrants allow carrier tuning down to 20 Hz.
+            const min = parameter === "carrier" ? 20 : 0;
+            const max = parameter === "carrier" ? 300 : 20;
+            const decimals = parameter === "carrier" ? 1 : 2;
+            let value = parseFloat(rawValue);
+
+            if (!Number.isFinite(value)) return;
+            value = Math.max(min, Math.min(max, value));
+            value = Number(value.toFixed(decimals));
+            quad[parameter] = value;
+
+            const prefix = `q${id}${parameter === "carrier" ? "Carrier" : "Pulse"}`;
+            const slider = document.getElementById(prefix);
+            const number = document.getElementById(prefix + "Num");
+            const readout = document.getElementById(prefix + "Val");
+            const formatted = value.toFixed(decimals);
+
+            if (slider) slider.value = formatted;
+            if (number && document.activeElement !== number) number.value = formatted;
+            if (readout) {
+                readout.innerText = parameter === "pulse" && value === 0
+                    ? "0.00 Hz · OFF"
+                    : formatted + " Hz";
+            }
+
+            if (parameter === "carrier" && !updatingCarrierPair) {
+                syncPairCarrierSlider([1, 2].includes(id) ? "top" : "bottom");
+            }
+        }
+
+        // Trajectory mappings share the same center and nominal horizontal radius.
+        function getLemniscatePos(progress) {
+            const angle = progress * Math.PI * 2;
+            const scale = 180;
+            const x = 300 + (scale * Math.cos(angle)) / (1 + Math.sin(angle) * Math.sin(angle));
+            const y = 300 + (scale * Math.sin(angle) * Math.cos(angle)) / (1 + Math.sin(angle) * Math.sin(angle));
+            return { x, y };
+        }
+
+        function getCirclePos(progress) {
+            const angle = progress * Math.PI * 2;
+            const radius = 180;
+            return {
+                x: 300 + radius * Math.cos(angle),
+                y: 300 + radius * Math.sin(angle)
+            };
+        }
+
+        function getTrajectoryPos(progress) {
+            if (trajectoryMode === "center") return { x: 300, y: 300 };
+            if (trajectoryMode === "horizontal") return { x: 300, y: 300 };
+            return trajectoryMode === "circle" ? getCirclePos(progress) : getLemniscatePos(progress);
+        }
+
+        function getCenterAudioProfile(source = "A") {
+            // Center/no-trajectory mode uses dedicated quadrant profiles:
+            // Source A = Q1 Green, Source B = Q2 Red. Both remain spatially centered.
+            const targetId = source === "B" ? 2 : 1;
+            const quad = quadrants.find(q => q.id === targetId) || quadrants[0];
+            return {
+                ...quad,
+                name: source === "B" ? "Q2 Red / Center B" : "Q1 Green / Center A",
+                x: 300,
+                y: 300
+            };
+        }
+
+        function getHorizontalAudioProfile(source = "A") {
+            // Horizontal mode is static and symmetric around the canvas center.
+            // A uses Q1 Green at x=180; B uses Q2 Red at x=420.
+            const isB = source === "B";
+            const targetId = isB ? 2 : 1;
+            const quad = quadrants.find(q => q.id === targetId) || quadrants[0];
+            return {
+                ...quad,
+                name: isB ? "Q2 Red / Horizontal Right" : "Q1 Green / Horizontal Left",
+                x: isB ? 420 : 180,
+                y: 300
+            };
+        }
+
+        function trajectoryModeLabel() {
+            if (trajectoryMode === "circle") return "CIRCLE";
+            if (trajectoryMode === "center") return "CENTER";
+            if (trajectoryMode === "horizontal") return "HORIZONTAL";
+            return "INFINITY";
+        }
+
+        function formatPulseForReadout(pulseHz) {
+            return Number(pulseHz) === 0 ? "OFF" : Number(pulseHz).toFixed(2) + "Hz";
+        }
+
+        function render(timestamp) {
+            if (lastFrameTimestamp === null) lastFrameTimestamp = timestamp;
+            const deltaSeconds = Math.max(0, (timestamp - lastFrameTimestamp) / 1000);
+            lastFrameTimestamp = timestamp;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Layer 1 (Bottom): Draw Centered Brain Image Background
+            drawCenteredBrain();
+
+            // Layer 2: Draw Quadrant Radial Glows & Grid Crosshairs
+            drawQuadrants();
+
+            // Layer 3: Draw selected trajectory
+            drawTrajectoryPath();
+
+            // Layer 4 (Top): Animate one or two independent sound centers.
+            if (isActive) {
+                const staticMode = trajectoryMode === "center" || trajectoryMode === "horizontal";
+                if (!staticMode) {
+                    const currentPos = getTrajectoryPos(t);
+                    const activeCycleHz = currentPos.y < 300 ? upperCycleHz : lowerCycleHz;
+                    const direction = reverseDirection ? -1 : 1;
+                    t = (t + direction * deltaSeconds * activeCycleHz + 1) % 1;
+                }
+
+                let posA;
+                let quadA;
+                if (trajectoryMode === "center") {
+                    posA = { x: 300, y: 300 };
+                    quadA = getCenterAudioProfile("A");
+                } else if (trajectoryMode === "horizontal") {
+                    quadA = getHorizontalAudioProfile("A");
+                    posA = { x: quadA.x, y: quadA.y };
+                } else {
+                    posA = getTrajectoryPos(t);
+                    quadA = getActiveQuadrant(posA);
+                }
+
+                updateSoundSource(primarySource, quadA, posA);
+                drawTracer(posA, quadA, false);
+
+                if (mirrorEnabled && mirrorSource) {
+                    let posB;
+                    let quadB;
+
+                    if (trajectoryMode === "center") {
+                        posB = { x: 300, y: 300 };
+                        quadB = getCenterAudioProfile("B");
+                    } else if (trajectoryMode === "horizontal") {
+                        quadB = getHorizontalAudioProfile("B");
+                        posB = { x: quadB.x, y: quadB.y };
+                    } else {
+                        let phaseB;
+                        if (secondSourceReverse) {
+                            const currentPosB = getTrajectoryPos(secondT);
+                            const activeCycleHzB = currentPosB.y < 300 ? upperCycleHz : lowerCycleHz;
+                            const direction = reverseDirection ? -1 : 1;
+                            const directionB = -direction;
+                            secondT = ((secondT + directionB * deltaSeconds * activeCycleHzB) % 1 + 1) % 1;
+                            phaseB = secondT;
+                        } else {
+                            phaseB = ((t + secondPhaseDegrees / 360) % 1 + 1) % 1;
+                            secondT = phaseB;
+                        }
+                        posB = getTrajectoryPos(phaseB);
+                        quadB = getActiveQuadrant(posB);
+                    }
+
+                    updateSoundSource(mirrorSource, quadB, posB);
+                    drawTracer(posB, quadB, true);
+
+                    const bMode = trajectoryMode === "center"
+                        ? "B CENTER:"
+                        : trajectoryMode === "horizontal"
+                            ? "B RIGHT:"
+                            : (secondSourceReverse ? "B OPPOSITE:" : `B +${secondPhaseDegrees.toFixed(0)}°:`);
+                    const aMode = trajectoryMode === "horizontal" ? "A LEFT:" : "A:";
+                    document.getElementById("readout").innerHTML = `
+                        ${trajectoryModeLabel()} &nbsp;|&nbsp;
+                        ${aMode} <span style="color:${quadA.color}">${quadA.name.toUpperCase()}</span>
+                        ${quadA.carrier.toFixed(1)}Hz / ${formatPulseForReadout(quadA.pulse)} &nbsp;|&nbsp;
+                        <span class="mirror-key">${bMode}</span> <span style="color:${quadB.color}">${quadB.name.toUpperCase()}</span>
+                        ${quadB.carrier.toFixed(1)}Hz / ${formatPulseForReadout(quadB.pulse)}
+                    `;
+                } else {
+                    const positionLabel = trajectoryMode === "horizontal" ? "LEFT A" : "CENTER A";
+                    document.getElementById("readout").innerHTML = `
+                        ${trajectoryModeLabel()} &nbsp;|&nbsp;
+                        ${positionLabel}: <span style="color:${quadA.color}">${quadA.name.toUpperCase()}</span> |
+                        THERMAL: <strong>${quadA.thermal.toUpperCase()}</strong> |
+                        CARRIER: ${quadA.carrier.toFixed(1)}Hz / PULSE: ${formatPulseForReadout(quadA.pulse)}
+                    `;
+                }
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        function drawCenteredBrain() {
+            const brainImg = document.getElementById("brainImg");
+            if (brainImg && brainImg.complete && brainImg.naturalWidth !== 0) {
+                const imgSize = 320; // Expanded to cover full quadrant area
+                ctx.save();
+                ctx.globalAlpha = 0.45; // Soft opacity so tracer stands out brightly
+                ctx.drawImage(
+                    brainImg,
+                    300 - (imgSize / 2),
+                    300 - (imgSize / 2),
+                    imgSize,
+                    imgSize
+                );
+                ctx.restore();
+            }
+        }
+
+        function drawQuadrants() {
+            ctx.strokeStyle = "rgba(42, 50, 66, 0.6)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(300, 50); ctx.lineTo(300, 550);
+            ctx.moveTo(50, 300); ctx.lineTo(550, 300);
+            ctx.stroke();
+
+            quadrants.forEach(q => {
+                const grad = ctx.createRadialGradient(q.x, q.y, 10, q.x, q.y, 110);
+                grad.addColorStop(0, `rgba(${q.rgb.join(',')}, 0.25)`);
+                grad.addColorStop(1, "rgba(10, 12, 16, 0)");
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(q.x, q.y, 110, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = q.color;
+                ctx.beginPath();
+                ctx.arc(q.x, q.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawTrajectoryPath() {
+            if (trajectoryMode === "center") return;
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(212, 175, 55, 0.35)";
+            ctx.lineWidth = 2;
+
+            if (trajectoryMode === "horizontal") {
+                ctx.moveTo(180, 300);
+                ctx.lineTo(420, 300);
+                ctx.stroke();
+                return;
+            }
+
+            for (let i = 0; i <= 1; i += 0.01) {
+                const pt = getTrajectoryPos(i);
+                if (i === 0) ctx.moveTo(pt.x, pt.y);
+                else ctx.lineTo(pt.x, pt.y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        function getActiveQuadrant(pos) {
+            let minDist = Infinity;
+            let closest = quadrants[0];
+            quadrants.forEach(q => {
+                const d = Math.hypot(q.x - pos.x, q.y - pos.y);
+                if (d < minDist) {
+                    minDist = d;
+                    closest = q;
+                }
+            });
+            return closest;
+        }
+
+        function updateSoundSource(source, quad, pos) {
+            if (!audioCtx || !source) return;
+
+            source.carrierOsc.frequency.setTargetAtTime(quad.carrier, audioCtx.currentTime, 0.1);
+
+            // Pulse = 0 means true modulation OFF: keep the carrier at a steady
+            // full envelope level and remove the LFO contribution smoothly.
+            const pulseHz = Math.max(0, Number(quad.pulse) || 0);
+            source.currentPulseHz = pulseHz;
+            if (pulseHz <= 0) {
+                source.pulseOsc.frequency.setTargetAtTime(0.001, audioCtx.currentTime, 0.05);
+                source.pulseDepth.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.03);
+                source.pulseGain.gain.setTargetAtTime(1.0, audioCtx.currentTime, 0.03);
+            } else {
+                source.pulseOsc.frequency.setTargetAtTime(pulseHz, audioCtx.currentTime, 0.1);
+                source.pulseDepth.gain.setTargetAtTime(0.35, audioCtx.currentTime, 0.03);
+                source.pulseGain.gain.setTargetAtTime(0.65, audioCtx.currentTime, 0.03);
+            }
+
+            if (source === mirrorSource && source.pulsePhaseDelay) {
+                const delaySeconds = modulationPhaseDelaySeconds(secondModulationPhaseDegrees, quad.pulse);
+                source.pulsePhaseDelay.delayTime.setTargetAtTime(delaySeconds, audioCtx.currentTime, 0.02);
+            } else if (source.pulsePhaseDelay) {
+                source.pulsePhaseDelay.delayTime.setTargetAtTime(0, audioCtx.currentTime, 0.02);
+            }
+
+            if (source.panner) {
+                const panVal = (pos.x - 300) / 200;
+                source.panner.pan.setTargetAtTime(Math.max(-1, Math.min(1, panVal)), audioCtx.currentTime, 0.1);
+            }
+        }
+
+        function drawTracer(pos, quad, isMirror) {
+            ctx.save();
+
+            // Glow aura overlaying the brain image.
+            const auraGrad = ctx.createRadialGradient(pos.x, pos.y, 5, pos.x, pos.y, isMirror ? 38 : 45);
+            auraGrad.addColorStop(0, `rgba(${quad.rgb.join(',')}, ${isMirror ? 0.72 : 0.9})`);
+            auraGrad.addColorStop(1, `rgba(${quad.rgb.join(',')}, 0)`);
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, isMirror ? 38 : 45, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowColor = quad.color;
+            ctx.shadowBlur = 16;
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, isMirror ? 5 : 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Mirror source gets a thin ring so the two centers remain visually distinguishable.
+            if (isMirror) {
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = "rgba(255,255,255,0.9)";
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    </script>
+
+</body></html>
